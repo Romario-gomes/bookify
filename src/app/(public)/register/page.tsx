@@ -6,7 +6,7 @@ import CardHeader from "@/components/ui/CardHeader";
 import CardTitle from "@/components/ui/CardTitle";
 import Link from "next/link";
 
-export default function Home() {
+export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md p-3">

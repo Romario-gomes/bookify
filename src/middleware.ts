@@ -3,6 +3,9 @@ import { MiddlewareConfig, NextRequest, NextResponse } from "next/server";
 const publicRoutes = [
     { path: '/sign-in', whenAuthenticated: 'redirect' },
     { path: '/register', whenAuthenticated: 'redirect' },
+    { path: '/dashboard', whenAuthenticated: 'next' },
+    { path: '/clients', whenAuthenticated: 'next' },
+    { path: '/', whenAuthenticated: 'next' },
     { path: '/accounts', whenAuthenticated: 'next' },
 ] as const;
 
