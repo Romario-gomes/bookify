@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 
 import { Plus, CalendarDays, Users, CreditCard, Scissors, Clock } from "lucide-react";
 import Link from "next/link";
+import { GET } from "@/app/api/services/route";
+import { Client } from "@prisma/client";
 
 // Mock data for demonstration
 const upcomingAppointments = [
@@ -16,16 +18,10 @@ const upcomingAppointments = [
   { id: 3, client: "Carla Santos", service: "Pedicure", date: "2025-04-11T10:00:00", status: "scheduled" },
 ]
 
-const recentClients = [
-  { id: 1, name: "Maria Silva", phone: "(11) 98765-4321", lastVisit: "2025-04-03" },
-  { id: 2, name: "Ana Oliveira", phone: "(11) 91234-5678", lastVisit: "2025-04-01" },
-  { id: 3, name: "Carla Santos", phone: "(11) 99876-5432", lastVisit: "2025-03-28" },
-]
-
-
 
 export default function Dashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const [clients, setClients] = useState<Client[]>([]);
   const [stats, setStats] = useState({
     totalAppointments: 0,
     totalClients: 0,
@@ -35,6 +31,14 @@ export default function Dashboard() {
   // Simulate fetching stats
   useEffect(() => {
     // In a real app, this would be an API call
+    const fetchClients = async () => {
+    const response = await fetch('/api/clients');
+    const data = await response.json();
+    setClients(data);
+  };
+
+  fetchClients();
+
     setStats({
       totalAppointments: 45,
       totalClients: 28,
@@ -186,7 +190,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentClients.map((client) => (
+              {clients.map((client: Client) => (
                 <div key={client.id} className="flex justify-between items-center p-3 border rounded-lg">
                   <div>
                     <p className="font-medium">{client.name}</p>
@@ -194,7 +198,7 @@ export default function Dashboard() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm">Last visit</p>
-                    <p className="text-xs text-muted-foreground">{client.lastVisit}</p>
+                    <p className="text-xs text-muted-foreground">Não Fiz</p>
                   </div>
                 </div>
               ))}

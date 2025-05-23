@@ -1,7 +1,7 @@
 "use client"
 
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
@@ -9,80 +9,22 @@ import { Plus, Search, MoreHorizontal, Phone, Calendar, Edit, Trash2 } from "luc
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table"
 
-import DashboardLayout from "@/components/ui/DashboardLayout"
-
-interface DashboardLayoutProps {
-    children: React.ReactNode
-}
-
-const clients = [
-    {
-        id: 1,
-        name: "Maria Silva",
-        phone: "(11) 98765-4321",
-        email: "maria@example.com",
-        lastVisit: "2025-04-03",
-        notes: "Prefers gel polish",
-    },
-    {
-        id: 2,
-        name: "Ana Oliveira",
-        phone: "(11) 91234-5678",
-        email: "ana@example.com",
-        lastVisit: "2025-04-01",
-        notes: "Allergic to acetone",
-    },
-    {
-        id: 3,
-        name: "Carla Santos",
-        phone: "(11) 99876-5432",
-        email: "carla@example.com",
-        lastVisit: "2025-03-28",
-        notes: "",
-    },
-    {
-        id: 4,
-        name: "Juliana Costa",
-        phone: "(11) 97654-3210",
-        email: "juliana@example.com",
-        lastVisit: "2025-03-25",
-        notes: "Prefers natural nails",
-    },
-    {
-        id: 5,
-        name: "Patricia Lima",
-        phone: "(11) 98877-6655",
-        email: "patricia@example.com",
-        lastVisit: "2025-03-20",
-        notes: "Sensitive cuticles",
-    },
-    {
-        id: 6,
-        name: "Fernanda Alves",
-        phone: "(11) 96655-4433",
-        email: "fernanda@example.com",
-        lastVisit: "2025-03-15",
-        notes: "",
-    },
-    {
-        id: 7,
-        name: "Luciana Martins",
-        phone: "(11) 99988-7766",
-        email: "luciana@example.com",
-        lastVisit: "2025-03-10",
-        notes: "Likes bright colors",
-    },
-]
+import { Client as prismaClient } from "@prisma/client";
 
 export default function Client() {
     const [searchTerm, setSearchTerm] = useState("")
+    const [clients, setClients] = useState<prismaClient[]>([]);
 
-  const filteredClients = clients.filter(
-    (client) =>
-      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.phone.includes(searchTerm) ||
-      client.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+    useEffect(() => {
+        const fetchClients = async () => {
+        const response = await fetch('/api/clients');
+        const data = await response.json();
+        setClients(data);
+    }   
+    fetchClients();
+
+    }, [])
+
     return (
         <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -134,7 +76,7 @@ export default function Client() {
                                     <TableCell className="hidden sm:table-cell">
                                         <div className="flex items-center">
                                             <Calendar className="mr-1 h-3 w-3 text-muted-foreground" />
-                                            {new Date(client.lastVisit).toLocaleDateString()}
+                                            Ajustar
                                         </div>
                                     </TableCell>
                                     <TableCell className="hidden md:table-cell max-w-[200px] truncate">

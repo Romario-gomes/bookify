@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table"
@@ -8,21 +8,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "@/components/ui/Badge"
 import { Plus, Search, MoreHorizontal, Clock, Edit, Trash2 } from "lucide-react"
 import Input from "@/components/ui/Input"
+import { Service } from "@prisma/client"
 
 // Mock data for demonstration
-const services = [
-  { id: 1, name: "Basic Manicure", price: 35.0, duration: 30, category: "Manicure" },
-  { id: 2, name: "Gel Manicure", price: 50.0, duration: 45, category: "Manicure" },
-  { id: 3, name: "Basic Pedicure", price: 45.0, duration: 45, category: "Pedicure" },
-  { id: 4, name: "Gel Pedicure", price: 60.0, duration: 60, category: "Pedicure" },
-  { id: 5, name: "Full Set Acrylic", price: 80.0, duration: 90, category: "Acrylic" },
-  { id: 6, name: "Acrylic Fill", price: 50.0, duration: 60, category: "Acrylic" },
-  { id: 7, name: "Nail Art (Simple)", price: 10.0, duration: 15, category: "Add-on" },
-  { id: 8, name: "Nail Art (Complex)", price: 25.0, duration: 30, category: "Add-on" },
-]
 
 export default function ServicesPage() {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [services, setServices] = useState<Service[]>([]);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredServices = services.filter(
     (service) =>
@@ -51,6 +44,16 @@ export default function ServicesPage() {
         return "bg-gray-100 text-gray-800 hover:bg-gray-100"
     }
   }
+
+  useEffect(() => {
+    const fetchServices = async() => {
+      const response = await fetch('api/services');
+      const data = await response.json();
+      setServices(data);
+    }
+
+    fetchServices();
+  }, [])
 
   return (
     <>
@@ -88,8 +91,8 @@ export default function ServicesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredServices.length > 0 ? (
-              filteredServices.map((service) => (
+            {services.length > 0 ? (
+              services.map((service) => (
                 <TableRow key={service.id}>
                   <TableCell className="font-medium">
                     {service.name}
@@ -110,7 +113,7 @@ export default function ServicesPage() {
                       {service.duration} min
                     </div>
                   </TableCell>
-                  <TableCell>{formatPrice(service.price)}</TableCell>
+                  <TableCell>{formatPrice(Number(service.price))}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

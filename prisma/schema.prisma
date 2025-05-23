@@ -1,15 +1,101 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// User model for authentication and user management
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  clients       Client[]
+  services      Service[]
+  appointments  Appointment[]
+  workingHours  WorkingHours[]
+}
+
+// Client model for storing client information
+model Client {
+  id            String    @id @default(uuid())
+  name          String
+  email         String?
+  phone         String
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  appointments  Appointment[]
+
+  @@index([userId])
+}
+
+// Service model for storing service offerings
+model Service {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  price         Decimal   @db.Decimal(10, 2)
+  duration      Int       // Duration in minutes
+  category      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  appointments  Appointment[]
+
+  @@index([userId])
+}
+
+// Appointment model for scheduling appointments
+model Appointment {
+  id            String    @id @default(uuid())
+  date          DateTime
+  status        AppointmentStatus @default(SCHEDULED)
+  notes         String?
+  price         Decimal   @db.Decimal(10, 2)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  clientId      String
+  client        Client    @relation(fields: [clientId], references: [id])
+  serviceId     String
+  service       Service   @relation(fields: [serviceId], references: [id])
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([serviceId])
+}
+
+// Enum for appointment status
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// WorkingHours model for storing working hours configuration
+model WorkingHours {
+  id            String    @id @default(uuid())
+  dayOfWeek     Int       // 0 = Sunday, 1 = Monday, etc.
+  startTime     String    // Format: "HH:MM"
+  endTime       String    // Format: "HH:MM"
+  isEnabled     Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, dayOfWeek])
+  @@index([userId])
+}
+
