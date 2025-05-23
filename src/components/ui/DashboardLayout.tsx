@@ -20,14 +20,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-
     const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Appointments", href: "/appointments", icon: CalendarDays },
     { name: "Clients", href: "/clients", icon: Users },
     { name: "Services", href: "/services", icon: Scissors },
-    { name: "Payments", href: "/payments", icon: CreditCard },
-    { name: "Settings", href: "/settings", icon: Settings },
   ]
 
     const isActive = (path: string) => {
@@ -38,7 +35,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
          <div className="flex h-screen bg-gray-50">
       {/* Sidebar for desktop */}
       <div className="hidden md:flex md:w-64 md:flex-col">
-        <div className="flex flex-col flex-grow pt-5 overflow-y-auto border-r bg-white">
+        <div className="flex flex-col flex-grow pt-5 overflow-y-auto border-r border-gray-300 bg-white">
           <div className="flex items-center flex-shrink-0 px-4">
             <Link href="/" className="text-xl font-bold text-rose-600">
               NailPro

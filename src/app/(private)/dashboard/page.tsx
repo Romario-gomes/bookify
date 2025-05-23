@@ -2,15 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
-import CardContent from "@/components/ui/CardContent";
-import CardDescription from "@/components/ui/CardDescription";
-import CardHeader from "@/components/ui/CardHeader";
-import CardTitle from "@/components/ui/CardTitle";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Calendar } from "@/components/ui/Calendar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 
-import { Plus, CalendarDays, Users, CreditCard, Link, Scissors, Clock } from "lucide-react";
+import { Plus, CalendarDays, Users, CreditCard, Scissors, Clock } from "lucide-react";
+import Link from "next/link";
 
 // Mock data for demonstration
 const upcomingAppointments = [
@@ -96,7 +93,7 @@ export default function Dashboard() {
             <CardDescription>Select a date to view appointments</CardDescription>
           </CardHeader>
           <CardContent>
-            <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
+            <Calendar mode="single"   className="p-3 border rounded-md border-gray-300" selected={date} onSelect={setDate} />
           </CardContent>
         </Card>
 
@@ -213,25 +210,25 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-2">
             <Link href="/clients/new">
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start mb-2">
                 <Users className="mr-2 h-4 w-4" />
                 Add New Client
               </Button>
             </Link>
             <Link href="/services/new">
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start  mb-2">
                 <Scissors className="mr-2 h-4 w-4" />
                 Add New Service
               </Button>
             </Link>
             <Link href="/appointments/new">
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start  mb-2">
                 <CalendarDays className="mr-2 h-4 w-4" />
                 Schedule Appointment
               </Button>
             </Link>
             <Link href="/settings/hours">
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start  mb-2">
                 <Clock className="mr-2 h-4 w-4" />
                 Set Working Hours
               </Button>

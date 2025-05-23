@@ -1,4 +1,4 @@
-import Card from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
 import CardContent from "@/components/ui/CardContent";
 import CardDescription from "@/components/ui/CardDescription";
 import CardFooter from "@/components/ui/CardFooter";

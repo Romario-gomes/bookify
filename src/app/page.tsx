@@ -28,10 +28,10 @@ export default function Home() {
                     </nav>
                     <div className="flex gap-2">
                         <Link href="/sign-in">
-                            <Button className="inline-flex items-center justify-center rounded-md text-sm border h-10 px-4 py-2 cursor-pointer hover:bg-gray-100">Login</Button>
+                            <Button variant="secondary" className="inline-flex items-center justify-center rounded-md text-sm border h-10 px-4 py-2 cursor-pointer hover:bg-gray-100">Login</Button>
                         </Link>
                         <Link href="/register">
-                            <Button className="inline-flex items-center justify-center rounded-md text-white bg-gray-950 h-10 px-4 py-2 cursor-pointer">Sign Up</Button>
+                            <Button variant="default" className="inline-flex items-center justify-center rounded-md  cursor-pointer">Sign Up</Button>
                         </Link>
                     </div>
                 </div>
@@ -60,12 +60,12 @@ export default function Home() {
                                 </div>
                                 <div className="flex flex-col sm:flex-row gap-4">
                                     <Link href="/register" className="w-full sm:w-auto">
-                                        <Button className="w-full bg-rose-500 text-white rounded p-3 hover:bg-rose-600 cursor-pointer">
+                                        <Button size="lg" variant="default" className="w-full bg-rose-500 text-white rounded p-3 hover:bg-rose-600 cursor-pointer">
                                             Get Started
                                         </Button>
                                     </Link>
                                     <Link href="#features" className="w-full sm:w-auto">
-                                        <Button className="w-full bg-white p-3 border border-gray-200 rounded cursor-pointer">
+                                        <Button size="lg" variant="secondary" className="w-full bg-white p-3 border border-gray-200 rounded cursor-pointer">
                                             Learn More
                                         </Button>
                                     </Link>

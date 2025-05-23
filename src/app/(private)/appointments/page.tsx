@@ -1,0 +1,279 @@
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/Button"
+import { Calendar } from "@/components/ui/Calendar"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs"
+import { Badge } from "@/components/ui/Badge"
+import { Plus, CalendarIcon, Clock, CheckCircle, XCircle } from "lucide-react"
+
+// Mock data for demonstration
+const appointments = [
+  {
+    id: 1,
+    client: "Maria Silva",
+    service: "Gel Manicure",
+    date: "2025-04-10T14:00:00",
+    duration: 45,
+    status: "scheduled",
+    price: 50.0,
+  },
+  {
+    id: 2,
+    client: "Ana Oliveira",
+    service: "Full Set Acrylic",
+    date: "2025-04-10T16:30:00",
+    duration: 90,
+    status: "scheduled",
+    price: 80.0,
+  },
+  {
+    id: 3,
+    client: "Carla Santos",
+    service: "Basic Pedicure",
+    date: "2025-04-11T10:00:00",
+    duration: 45,
+    status: "scheduled",
+    price: 45.0,
+  },
+  {
+    id: 4,
+    client: "Juliana Costa",
+    service: "Gel Pedicure",
+    date: "2025-04-09T11:00:00",
+    duration: 60,
+    status: "completed",
+    price: 60.0,
+  },
+  {
+    id: 5,
+    client: "Patricia Lima",
+    service: "Basic Manicure",
+    date: "2025-04-09T14:30:00",
+    duration: 30,
+    status: "completed",
+    price: 35.0,
+  },
+  {
+    id: 6,
+    client: "Fernanda Alves",
+    service: "Acrylic Fill",
+    date: "2025-04-08T15:00:00",
+    duration: 60,
+    status: "cancelled",
+    price: 50.0,
+  },
+]
+
+export default function AppointmentsPage() {
+  const [date, setDate] = useState<Date | undefined>(new Date())
+  const [view, setView] = useState<"day" | "week" | "month">("day")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  // Filter appointments based on selected date and status
+  const filteredAppointments = appointments.filter((appointment) => {
+    const appointmentDate = new Date(appointment.date)
+    const selectedDate = date || new Date()
+
+    // Filter by date based on view
+    let dateMatches = false
+    if (view === "day") {
+      dateMatches =
+        appointmentDate.getDate() === selectedDate.getDate() &&
+        appointmentDate.getMonth() === selectedDate.getMonth() &&
+        appointmentDate.getFullYear() === selectedDate.getFullYear()
+    } else if (view === "week") {
+      // Get start and end of week for selected date
+      const startOfWeek = new Date(selectedDate)
+      startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay())
+      const endOfWeek = new Date(startOfWeek)
+      endOfWeek.setDate(startOfWeek.getDate() + 6)
+
+      dateMatches = appointmentDate >= startOfWeek && appointmentDate <= endOfWeek
+    } else if (view === "month") {
+      dateMatches =
+        appointmentDate.getMonth() === selectedDate.getMonth() &&
+        appointmentDate.getFullYear() === selectedDate.getFullYear()
+    }
+
+    // Filter by status
+    const statusMatches = statusFilter === "all" || appointment.status === statusFilter
+
+    return dateMatches && statusMatches
+  })
+
+  // Sort appointments by date
+  const sortedAppointments = [...filteredAppointments].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  )
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "scheduled":
+        return (
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+            Scheduled
+          </Badge>
+        )
+      case "completed":
+        return (
+          <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
+            Completed
+          </Badge>
+        )
+      case "cancelled":
+        return (
+          <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">
+            Cancelled
+          </Badge>
+        )
+      default:
+        return <Badge variant="outline">{status}</Badge>
+    }
+  }
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(price)
+  }
+
+  return (
+    <>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">Appointments</h1>
+        <Link href="/appointments/new">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" /> New Appointment
+          </Button>
+        </Link>
+      </div>
+
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-12">
+        {/* Calendar and filters */}
+        <Card className="lg:col-span-4">
+          <CardHeader>
+            <CardTitle>Calendar</CardTitle>
+            <CardDescription>Select a date to view appointments</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
+            <div className="space-y-2">
+              <div className="flex flex-col space-y-1.5">
+                <label htmlFor="view" className="text-sm font-medium">
+                  View
+                </label>
+                <Tabs value={view} onValueChange={(v) => setView(v as "day" | "week" | "month")}>
+                  <TabsList className="grid grid-cols-3">
+                    <TabsTrigger value="day">Day</TabsTrigger>
+                    <TabsTrigger value="week">Week</TabsTrigger>
+                    <TabsTrigger value="month">Month</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <label htmlFor="status" className="text-sm font-medium">
+                  Status
+                </label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Appointments list */}
+        <Card className="lg:col-span-8">
+          <CardHeader>
+            <CardTitle>
+              {view === "day" && date && `Appointments for ${date.toLocaleDateString()}`}
+              {view === "week" && "Appointments for the Week"}
+              {view === "month" &&
+                date &&
+                `Appointments for ${date.toLocaleString("default", { month: "long", year: "numeric" })}`}
+            </CardTitle>
+            <CardDescription>
+              {sortedAppointments.length} appointment{sortedAppointments.length !== 1 ? "s" : ""} found
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {sortedAppointments.length > 0 ? (
+              <div className="space-y-4">
+                {sortedAppointments.map((appointment) => (
+                  <div key={appointment.id} className="flex flex-col p-4 border rounded-lg">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-medium">{appointment.client}</h3>
+                        <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                      </div>
+                      {getStatusBadge(appointment.status)}
+                    </div>
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm">
+                      <div className="flex items-center">
+                        <CalendarIcon className="mr-1 h-3 w-3 text-muted-foreground" />
+                        {new Date(appointment.date).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
+                        {new Date(appointment.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
+                        {appointment.duration} min
+                      </div>
+                      <div className="font-medium ml-auto">{formatPrice(appointment.price)}</div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      <Link href={`/appointments/${appointment.id}`}>
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </Link>
+                      {appointment.status === "scheduled" && (
+                        <>
+                          <Link href={`/appointments/${appointment.id}/complete`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-green-600 border-green-600 hover:bg-green-50"
+                            >
+                              <CheckCircle className="mr-1 h-3 w-3" />
+                              Complete
+                            </Button>
+                          </Link>
+                          <Link href={`/appointments/${appointment.id}/cancel`}>
+                            <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50">
+                              <XCircle className="mr-1 h-3 w-3" />
+                              Cancel
+                            </Button>
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                No appointments found for the selected date and filters.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  )
+}
