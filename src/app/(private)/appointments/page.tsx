@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { Calendar } from "@/components/ui/Calendar"
@@ -9,69 +9,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { Badge } from "@/components/ui/Badge"
 import { Plus, CalendarIcon, Clock, CheckCircle, XCircle } from "lucide-react"
+import { Appointment, Prisma } from "@prisma/client"
 
 // Mock data for demonstration
-const appointments = [
-  {
-    id: 1,
-    client: "Maria Silva",
-    service: "Gel Manicure",
-    date: "2025-04-10T14:00:00",
-    duration: 45,
-    status: "scheduled",
-    price: 50.0,
-  },
-  {
-    id: 2,
-    client: "Ana Oliveira",
-    service: "Full Set Acrylic",
-    date: "2025-04-10T16:30:00",
-    duration: 90,
-    status: "scheduled",
-    price: 80.0,
-  },
-  {
-    id: 3,
-    client: "Carla Santos",
-    service: "Basic Pedicure",
-    date: "2025-04-11T10:00:00",
-    duration: 45,
-    status: "scheduled",
-    price: 45.0,
-  },
-  {
-    id: 4,
-    client: "Juliana Costa",
-    service: "Gel Pedicure",
-    date: "2025-04-09T11:00:00",
-    duration: 60,
-    status: "completed",
-    price: 60.0,
-  },
-  {
-    id: 5,
-    client: "Patricia Lima",
-    service: "Basic Manicure",
-    date: "2025-04-09T14:30:00",
-    duration: 30,
-    status: "completed",
-    price: 35.0,
-  },
-  {
-    id: 6,
-    client: "Fernanda Alves",
-    service: "Acrylic Fill",
-    date: "2025-04-08T15:00:00",
-    duration: 60,
-    status: "cancelled",
-    price: 50.0,
-  },
-]
+
+type AppointmentWithClient = Prisma.AppointmentGetPayload<{
+  include: { client: true, user: true, service: true }
+}>;
 
 export default function AppointmentsPage() {
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
   const [view, setView] = useState<"day" | "week" | "month">("day")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const response = await fetch('/api/appointments');
+      const data = await response.json();
+      setAppointments(data);
+    };
+    
+    fetchAppointments();
+  }, []);
 
   // Filter appointments based on selected date and status
   const filteredAppointments = appointments.filter((appointment) => {
@@ -109,6 +69,7 @@ export default function AppointmentsPage() {
   const sortedAppointments = [...filteredAppointments].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   )
+
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -206,18 +167,18 @@ export default function AppointmentsPage() {
                 `Appointments for ${date.toLocaleString("default", { month: "long", year: "numeric" })}`}
             </CardTitle>
             <CardDescription>
-              {sortedAppointments.length} appointment{sortedAppointments.length !== 1 ? "s" : ""} found
+              {filteredAppointments.length} appointment{filteredAppointments.length !== 1 ? "s" : ""} found
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {sortedAppointments.length > 0 ? (
+            {filteredAppointments.length > 0 ? (
               <div className="space-y-4">
-                {sortedAppointments.map((appointment) => (
+                {filteredAppointments.map((appointment) => (
                   <div key={appointment.id} className="flex flex-col p-4 border rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h3 className="font-medium">{appointment.client}</h3>
-                        <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                        <h3 className="font-medium">{appointment.client.name}</h3>
+                        <p className="text-sm text-muted-foreground">{appointment.service.name}</p>
                       </div>
                       {getStatusBadge(appointment.status)}
                     </div>
@@ -232,9 +193,9 @@ export default function AppointmentsPage() {
                       </div>
                       <div className="flex items-center">
                         <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
-                        {appointment.duration} min
+                        {appointment.service.duration} min
                       </div>
-                      <div className="font-medium ml-auto">{formatPrice(appointment.price)}</div>
+                      <div className="font-medium ml-auto">{formatPrice(Number(appointment.price))}</div>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-4">
                       <Link href={`/appointments/${appointment.id}`}>
@@ -242,7 +203,8 @@ export default function AppointmentsPage() {
                           View Details
                         </Button>
                       </Link>
-                      {appointment.status === "scheduled" && (
+                      
+                      {appointment.status === "SCHEDULED" && (
                         <>
                           <Link href={`/appointments/${appointment.id}/complete`}>
                             <Button

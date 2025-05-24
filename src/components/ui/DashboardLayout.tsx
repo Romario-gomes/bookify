@@ -38,7 +38,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="flex flex-col flex-grow pt-5 overflow-y-auto border-r border-gray-300 bg-white">
           <div className="flex items-center flex-shrink-0 px-4">
             <Link href="/" className="text-xl font-bold text-rose-600">
-              NailPro
+              Bookify
             </Link>
           </div>
           <div className="mt-8 flex-1 flex flex-col">
@@ -69,7 +69,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center cursor-pointer">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg" alt="User" />
+                    <AvatarImage src="https://gru.ifsp.edu.br/images/phocagallery/galeria2/image03_grd.png" alt="User" />
                     <AvatarFallback>US</AvatarFallback>
                   </Avatar>
                   <div className="ml-3">
@@ -138,9 +138,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="ml-4 flex items-center md:ml-6">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
+                  <Button variant="ghost" size="icon" className="rounded-full  mr-6">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder.svg" alt="User" />
+                      <AvatarImage src="https://gru.ifsp.edu.br/images/phocagallery/galeria2/image03_grd.png" alt="User" />
                       <AvatarFallback>US</AvatarFallback>
                     </Avatar>
                   </Button>

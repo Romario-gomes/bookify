@@ -8,8 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 
 import { Plus, CalendarDays, Users, CreditCard, Scissors, Clock } from "lucide-react";
 import Link from "next/link";
-import { GET } from "@/app/api/services/route";
-import { Client } from "@prisma/client";
+import { Client, Prisma, Service } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
 // Mock data for demonstration
 const upcomingAppointments = [
@@ -17,10 +17,13 @@ const upcomingAppointments = [
   { id: 2, client: "Ana Oliveira", service: "Full Set Acrylic", date: "2025-04-10T16:30:00", status: "scheduled" },
   { id: 3, client: "Carla Santos", service: "Pedicure", date: "2025-04-11T10:00:00", status: "scheduled" },
 ]
-
-
+type AppointmentWithClient = Prisma.AppointmentGetPayload<{
+    include: { client: true, user: true, service: true }
+  }>;
 export default function Dashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
+  const [services, setService] = useState<Service[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [stats, setStats] = useState({
     totalAppointments: 0,
@@ -28,23 +31,43 @@ export default function Dashboard() {
     totalRevenue: 0,
   })
 
-  // Simulate fetching stats
+  
+
   useEffect(() => {
     // In a real app, this would be an API call
+    const fetchAppointments = async () => {
+      const response = await fetch('/api/appointments');
+      const data = await response.json();
+      setAppointments(data); 
+    };
+
     const fetchClients = async () => {
-    const response = await fetch('/api/clients');
-    const data = await response.json();
-    setClients(data);
-  };
+      const response = await fetch('/api/clients');
+      const data = await response.json();
+      setClients(data); 
+    };
 
-  fetchClients();
+    const fetchServices = async () => {
+      const response = await fetch('/api/services');
+      const data = await response.json();
+      setService(data); 
+    };
 
+
+    fetchAppointments();
+    fetchClients();
+    fetchServices();
     setStats({
-      totalAppointments: 45,
-      totalClients: 28,
+      totalAppointments: appointments.length,
+      totalClients: appointments.length,
       totalRevenue: 3250,
     })
-  }, [])
+  }, []);
+
+    const totalRevenue = services.reduce((sum, service) => {
+      return sum + Number(service.price);
+    }, 0)
+
 
     return (
       <>
@@ -63,7 +86,7 @@ export default function Dashboard() {
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalAppointments}</div>
+            <div className="text-2xl font-bold">{appointments.length}</div>
             <p className="text-xs text-muted-foreground">This month</p>
           </CardContent>
         </Card>
@@ -73,7 +96,7 @@ export default function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalClients}</div>
+            <div className="text-2xl font-bold">{clients.length}</div>
             <p className="text-xs text-muted-foreground">Active clients</p>
           </CardContent>
         </Card>
@@ -83,12 +106,11 @@ export default function Dashboard() {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ {stats.totalRevenue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">R$ {totalRevenue.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">This month</p>
           </CardContent>
         </Card>
       </div>
-
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
         {/* Calendar */}
         <Card className="col-span-1">
