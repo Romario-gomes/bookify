@@ -73,9 +73,11 @@ export default function Dashboard() {
       <>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> New Appointment
-        </Button>
+        <Link href="/appointments/new">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" /> New Appointment
+          </Button>
+        </Link>
       </div>
 
       {/* Stats Cards */}

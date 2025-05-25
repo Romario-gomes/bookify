@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,18 +10,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Company model for multi-tenancy
+model Company {
+  id            String    @id @default(uuid())
+  name          String
+  email         String?
+  phone         String?
+  address       String?
+  website       String?
+  logo          String?   // URL to logo image
+  settings      Json?     // Company-specific settings
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  users         User[]
+  clients       Client[]
+  services      Service[]
+  appointments  Appointment[]
+  workingHours  WorkingHours[]
+
+  @@index([name])
+}
+
 // User model for authentication and user management
 model User {
   id            String    @id @default(uuid())
   name          String
   email         String    @unique
   password      String
+  role          UserRole  @default(STAFF)
+  isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
   clients       Client[]
   services      Service[]
   appointments  Appointment[]
   workingHours  WorkingHours[]
+
+  @@index([companyId])
+  @@index([email])
+}
+
+// Enum for user roles
+enum UserRole {
+  OWNER
+  ADMIN
+  STAFF
 }
 
 // Client model for storing client information
@@ -30,10 +68,13 @@ model Client {
   notes         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
   userId        String
   user          User      @relation(fields: [userId], references: [id])
   appointments  Appointment[]
 
+  @@index([companyId])
   @@index([userId])
 }
 
@@ -45,12 +86,16 @@ model Service {
   price         Decimal   @db.Decimal(10, 2)
   duration      Int       // Duration in minutes
   category      String
+  isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
   userId        String
   user          User      @relation(fields: [userId], references: [id])
   appointments  Appointment[]
 
+  @@index([companyId])
   @@index([userId])
 }
 
@@ -63,6 +108,8 @@ model Appointment {
   price         Decimal   @db.Decimal(10, 2)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
   userId        String
   user          User      @relation(fields: [userId], references: [id])
   clientId      String
@@ -70,6 +117,7 @@ model Appointment {
   serviceId     String
   service       Service   @relation(fields: [serviceId], references: [id])
 
+  @@index([companyId])
   @@index([userId])
   @@index([clientId])
   @@index([serviceId])
@@ -92,10 +140,14 @@ model WorkingHours {
   isEnabled     Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
   userId        String
   user          User      @relation(fields: [userId], references: [id])
 
-  @@unique([userId, dayOfWeek])
+  @@unique([companyId, userId, dayOfWeek])
+  @@index([companyId])
   @@index([userId])
 }
+
 

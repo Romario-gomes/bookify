@@ -17,28 +17,7 @@ import { Textarea } from "@/components/ui/Textarea"
 import { AlertCircle, ArrowLeft, CalendarIcon, Clock } from "lucide-react"
 import Link from "next/link"
 import Input from "@/components/ui/Input"
-
-// Mock data for demonstration
-const clients = [
-  { id: "1", name: "Maria Silva" },
-  { id: "2", name: "Ana Oliveira" },
-  { id: "3", name: "Carla Santos" },
-  { id: "4", name: "Juliana Costa" },
-  { id: "5", name: "Patricia Lima" },
-  { id: "6", name: "Fernanda Alves" },
-  { id: "7", name: "Luciana Martins" },
-]
-
-const services = [
-  { id: "1", name: "Basic Manicure", price: 35.0, duration: 30 },
-  { id: "2", name: "Gel Manicure", price: 50.0, duration: 45 },
-  { id: "3", name: "Basic Pedicure", price: 45.0, duration: 45 },
-  { id: "4", name: "Gel Pedicure", price: 60.0, duration: 60 },
-  { id: "5", name: "Full Set Acrylic", price: 80.0, duration: 90 },
-  { id: "6", name: "Acrylic Fill", price: 50.0, duration: 60 },
-  { id: "7", name: "Nail Art (Simple)", price: 10.0, duration: 15 },
-  { id: "8", name: "Nail Art (Complex)", price: 25.0, duration: 30 },
-]
+import { Client, Service } from "@prisma/client"
 
 // Available time slots (in a real app, these would be dynamically generated based on working hours and existing appointments)
 const timeSlots = [
@@ -76,11 +55,34 @@ type AppointmentFormValues = z.infer<typeof appointmentSchema>
 
 export default function NewAppointmentPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
+  const [ clients, setClients ] = useState<Client[]>([]);
+    const [services, setService] = useState<Service[]>([]);
+
+
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedService, setSelectedService] = useState<(typeof services)[0] | null>(null)
 
+
+useEffect(() => {
+   const fetchClients = async () => {
+      const response = await fetch('/api/clients');
+      const data = await response.json();
+      setClients(data); 
+    };
+
+     const fetchServices = async () => {
+      const response = await fetch('/api/services');
+      const data = await response.json();
+      setService(data); 
+    };
+
+    fetchClients();
+    fetchServices();
+
+}, []);
+  console.log('Data: ', services);
   const form = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentSchema),
     defaultValues: {
@@ -93,6 +95,8 @@ export default function NewAppointmentPage() {
     },
   })
 
+  
+
   // Update price when service changes
   useEffect(() => {
     const serviceId = form.watch("serviceId")
@@ -100,13 +104,13 @@ export default function NewAppointmentPage() {
       const service = services.find((s) => s.id === serviceId)
       if (service) {
         setSelectedService(service)
-        form.setValue("price", service.price)
+        form.setValue("price", Number(service.price))
       }
     }
   }, [form.watch("serviceId"), form])
 
   async function onSubmit(data: AppointmentFormValues) {
-    setIsLoading(true)
+    setIsLoading(true);
     setError(null)
 
     try {
@@ -116,11 +120,15 @@ export default function NewAppointmentPage() {
         dateTime: `${format(data.date, "yyyy-MM-dd")}T${data.time}:00`,
       })
 
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await fetch('/api/appointments', {
+        method: 'POST',
+        body: JSON.stringify(data), 
+        headers: {"Content-Type": "application/json"},
+      });
+
+      router.push("/appointments")  ;
 
       // Redirect to appointments list
-      router.push("/appointments")
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred")
     } finally {
@@ -195,7 +203,7 @@ export default function NewAppointmentPage() {
                             <SelectItem key={service.id} value={service.id}>
                               {service.name} -{" "}
                               {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
-                                service.price,
+                                Number(service.price),
                               )}
                             </SelectItem>
                           ))}
@@ -225,6 +233,7 @@ export default function NewAppointmentPage() {
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
+                            className="bg-gray-50"
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}

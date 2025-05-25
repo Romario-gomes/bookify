@@ -198,7 +198,7 @@ export default function AppointmentsPage() {
                       <div className="font-medium ml-auto">{formatPrice(Number(appointment.price))}</div>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-4">
-                      <Link href={`/appointments/${appointment.id}`}>
+                      <Link href={`/appointments/${appointment.id}/update`}>
                         <Button variant="outline" size="sm">
                           View Details
                         </Button>
