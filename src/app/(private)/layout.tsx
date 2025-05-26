@@ -1,6 +1,8 @@
+"use server"
+
 import DashboardLayout from "@/components/ui/DashboardLayout";
 
-export default function PrivateLayout({
+export default async function PrivateLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;

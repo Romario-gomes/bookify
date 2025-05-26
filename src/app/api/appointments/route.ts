@@ -3,13 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     const appointments = await prisma.appointment.findMany({
+        where: {companyId: '3e5b31a7-76d1-4776-b0f9-69176feb9ab2'},
         include: {
             client: true,
             user: true,
             service: true,
         }
     });
-
     return NextResponse.json(appointments);
 }
 
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
         data: {
             clientId,
             serviceId,
+            companyId: '3e5b31a7-76d1-4776-b0f9-69176feb9ab2',
             date,  
             price,
             notes,

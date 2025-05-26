@@ -1,3 +1,6 @@
+"use client";
+
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import { Poppins } from 'next/font/google'
 
@@ -15,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <body >
-        {children}
+          <SessionProvider>
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

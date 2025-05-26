@@ -1,22 +1,22 @@
 "use client"
 
-
 import Link from "next/link"
 import { Button } from "./Button"
 import { CalendarDays, CreditCard, LayoutDashboard, LogOut, Menu, Scissors, Settings, Users } from "lucide-react"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu"
 import { usePathname } from "next/navigation"
-import { Avatar, AvatarFallback, AvatarImage } from "./Avatar"
 import { useState } from "react"
 import { SheetContent, Sheet } from "./Sheet"
+import { Avatar, AvatarFallback, AvatarImage } from "./Avatar"
+import { useSession } from "next-auth/react"
 
 interface DashboardLayoutProps {
     children: React.ReactNode
 }
 
-
-
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { data: session } = useSession();
+  console.log('Dados: ', session);
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -68,9 +68,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center cursor-pointer">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://gru.ifsp.edu.br/images/phocagallery/galeria2/image03_grd.png" alt="User" />
-                    <AvatarFallback>US</AvatarFallback>
+                 <Avatar className="h-8 w-8">
+                      { session?.user?.image && (
+                        <AvatarImage src={session.user.image} alt="User" />
+                      )}
                   </Avatar>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-700">User Name</p>
@@ -140,7 +141,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full  mr-6">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://gru.ifsp.edu.br/images/phocagallery/galeria2/image03_grd.png" alt="User" />
+                      { session?.user?.image && (
+                        <AvatarImage src={session.user.image} alt="User" />
+                      )}
                       <AvatarFallback>US</AvatarFallback>
                     </Avatar>
                   </Button>

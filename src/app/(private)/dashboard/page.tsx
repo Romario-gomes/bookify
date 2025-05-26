@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { Plus, CalendarDays, Users, CreditCard, Scissors, Clock } from "lucide-react";
 import Link from "next/link";
 import { Client, Prisma, Service } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
+import { useSession } from "next-auth/react";
+
 
 // Mock data for demonstration
 const upcomingAppointments = [
@@ -21,6 +22,7 @@ type AppointmentWithClient = Prisma.AppointmentGetPayload<{
     include: { client: true, user: true, service: true }
   }>;
 export default function Dashboard() {
+  const { data: session, status } = useSession()
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
   const [services, setService] = useState<Service[]>([]);
@@ -32,7 +34,7 @@ export default function Dashboard() {
   })
 
   
-
+  console.log('session: ', session);
   useEffect(() => {
     // In a real app, this would be an API call
     const fetchAppointments = async () => {
@@ -67,7 +69,6 @@ export default function Dashboard() {
     const totalRevenue = services.reduce((sum, service) => {
       return sum + Number(service.price);
     }, 0)
-
 
     return (
       <>
