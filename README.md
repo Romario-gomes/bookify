@@ -8,7 +8,7 @@
   </p>
   
   <p align="center">
-    Streamline your nail business with our comprehensive management platform designed specifically for nail salon owners and professionals.
+    Simplifique seu negócio com nossa plataforma de gerenciamento, especificamente projetada para proprietários e profissionais  que oferecem serviços e produtos.
   </p>
 
   <p align="center">
@@ -29,19 +29,19 @@
 
 ---
 
-## 📸 Screenshots
+## 📸 Tela
 
 ### Dashboard Overview
-<img src="docs/images/dashboard.png" alt="Dashboard Overview" width="100%">
+<img src="docs/dashboard.png" alt="Dashboard Overview" width="100%">
 
 ### Appointment Management
-<img src="docs/images/appointments.png" alt="Appointment Management" width="100%">
+<img src="docs/appointments.png" alt="Appointment Management" width="100%">
 
 ### Client Management
-<img src="docs/images/clients.png" alt="Client Management" width="100%">
+<img src="docs/clients.png" alt="Client Management" width="100%">
 
 ### Service Catalog
-<img src="docs/images/services.png" alt="Service Catalog" width="100%">
+<img src="docs/services.png" alt="Service Catalog" width="100%">
 
 ---
 
@@ -70,12 +70,6 @@
 - **Pricing & Duration**: Set custom prices and service durations
 - **Categories**: Organize services by type (Manicure, Pedicure, Acrylic, etc.)
 - **Service Descriptions**: Detailed descriptions for each service
-
-### 💳 **Payment Tracking**
-- **Multiple Payment Methods**: Cash, Credit Card, Debit Card, PIX, Bank Transfer
-- **Payment Status**: Track pending, completed, refunded, and failed payments
-- **Revenue Reports**: Monitor your business performance
-- **Payment History**: Complete payment records for each appointment
 
 ### ⏰ **Working Hours Management**
 - **Flexible Schedules**: Set different hours for each day of the week

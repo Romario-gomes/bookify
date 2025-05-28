@@ -11,8 +11,6 @@ import Link from "next/link";
 import { Client, Prisma, Service } from "@prisma/client";
 import { useSession } from "next-auth/react";
 
-
-// Mock data for demonstration
 const upcomingAppointments = [
   { id: 1, client: "Maria Silva", service: "Gel Manicure", date: "2025-04-10T14:00:00", status: "scheduled" },
   { id: 2, client: "Ana Oliveira", service: "Full Set Acrylic", date: "2025-04-10T16:30:00", status: "scheduled" },
@@ -78,7 +76,7 @@ export default function Dashboard() {
         <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
         <Link href="/appointments/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Appointment
+            <Plus className="mr-2 h-4 w-4" /> Novo Agendamento
           </Button>
         </Link>
       </div>
@@ -87,44 +85,43 @@ export default function Dashboard() {
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
+            <CardTitle className="text-sm font-medium">Agendamentos</CardTitle>
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{appointments.length}</div>
-            <p className="text-xs text-muted-foreground">This month</p>
+            <p className="text-xs text-muted-foreground">Esse mês</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+            <CardTitle className="text-sm font-medium">Clientes</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{clients.length}</div>
-            <p className="text-xs text-muted-foreground">Active clients</p>
+            <p className="text-xs text-muted-foreground">Clientes ativos</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Total</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">R$ {totalRevenue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">This month</p>
+            <p className="text-xs text-muted-foreground">Esse mês</p>
           </CardContent>
         </Card>
       </div>
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-        {/* Calendar */}
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Calendar</CardTitle>
-            <CardDescription>Select a date to view appointments</CardDescription>
+            <CardTitle>Calendário</CardTitle>
+            <CardDescription>Selecione uma data para ver agendamentos</CardDescription>
           </CardHeader>
           <CardContent>
-            <Calendar mode="single"   className="p-3 border rounded-md border-gray-300" selected={date} onSelect={setDate} />
+            <Calendar mode="single" selected={date} onSelect={setDate} />
           </CardContent>
         </Card>
 
@@ -132,28 +129,28 @@ export default function Dashboard() {
         <Card className="col-span-1 lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Upcoming Appointments</CardTitle>
-              <CardDescription>Your schedule for the next few days</CardDescription>
+              <CardTitle>Próximos Compromissos</CardTitle>
+              <CardDescription>Sua agenda para os próximos dias</CardDescription>
             </div>
             <Link href="/appointments">
               <Button variant="outline" size="sm">
-                View All
+                Ver todos
               </Button>
             </Link>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="today">
               <TabsList className="mb-4">
-                <TabsTrigger value="today">Today</TabsTrigger>
-                <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>
-                <TabsTrigger value="week">This Week</TabsTrigger>
+                <TabsTrigger value="today">Hoje</TabsTrigger>
+                <TabsTrigger value="tomorrow">Amanhã</TabsTrigger>
+                <TabsTrigger value="week">Essa semana</TabsTrigger>
               </TabsList>
               <TabsContent value="today" className="space-y-4">
-                {upcomingAppointments.slice(0, 2).map((appointment) => (
+                {appointments.slice(0, 2).map((appointment) => (
                   <div key={appointment.id} className="flex justify-between items-center p-3 border rounded-lg">
                     <div>
-                      <p className="font-medium">{appointment.client}</p>
-                      <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                      <p className="font-medium">{appointment.client.name}</p>
+                      <p className="text-sm text-muted-foreground">{appointment.service.name}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium">
@@ -182,11 +179,11 @@ export default function Dashboard() {
                 </div>
               </TabsContent>
               <TabsContent value="week" className="space-y-4">
-                {upcomingAppointments.map((appointment) => (
+                {appointments.map((appointment) => (
                   <div key={appointment.id} className="flex justify-between items-center p-3 border rounded-lg">
                     <div>
-                      <p className="font-medium">{appointment.client}</p>
-                      <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                      <p className="font-medium">{appointment.client.name}</p>
+                      <p className="text-sm text-muted-foreground">{appointment.service.name}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium">
@@ -206,12 +203,12 @@ export default function Dashboard() {
         <Card className="col-span-1 lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Recent Clients</CardTitle>
-              <CardDescription>Your most recently served clients</CardDescription>
+              <CardTitle>Clientes Recentes</CardTitle>
+              <CardDescription>Clientes mais recentes atendidos</CardDescription>
             </div>
             <Link href="/clients">
               <Button variant="outline" size="sm">
-                View All
+                Ver todos
               </Button>
             </Link>
           </CardHeader>
@@ -224,8 +221,8 @@ export default function Dashboard() {
                     <p className="text-sm text-muted-foreground">{client.phone}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm">Last visit</p>
-                    <p className="text-xs text-muted-foreground">Não Fiz</p>
+                    <p className="text-sm">última visita</p>
+                    <p className="text-xs text-muted-foreground">12/05/2025</p>
                   </div>
                 </div>
               ))}
@@ -236,32 +233,32 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks you might need</CardDescription>
+            <CardTitle>Ações rapidas</CardTitle>
+            <CardDescription>Tarefas comuns que você pode precisar</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <Link href="/clients/new">
               <Button variant="outline" className="w-full justify-start mb-2">
                 <Users className="mr-2 h-4 w-4" />
-                Add New Client
+                Add Novo Cliente
               </Button>
             </Link>
             <Link href="/services/new">
               <Button variant="outline" className="w-full justify-start  mb-2">
                 <Scissors className="mr-2 h-4 w-4" />
-                Add New Service
+                Add Novo serviço
               </Button>
             </Link>
             <Link href="/appointments/new">
               <Button variant="outline" className="w-full justify-start  mb-2">
                 <CalendarDays className="mr-2 h-4 w-4" />
-                Schedule Appointment
+                Agendar Pedido
               </Button>
             </Link>
             <Link href="/settings/hours">
               <Button variant="outline" className="w-full justify-start  mb-2">
                 <Clock className="mr-2 h-4 w-4" />
-                Set Working Hours
+                Horário de atendimento
               </Button>
             </Link>
           </CardContent>

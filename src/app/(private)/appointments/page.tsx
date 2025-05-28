@@ -76,19 +76,19 @@ export default function AppointmentsPage() {
       case "scheduled":
         return (
           <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-            Scheduled
+            Agendado
           </Badge>
         )
       case "completed":
         return (
           <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
-            Completed
+            Completo
           </Badge>
         )
       case "cancelled":
         return (
           <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">
-            Cancelled
+            Cancelado
           </Badge>
         )
       default:
@@ -106,10 +106,10 @@ export default function AppointmentsPage() {
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold">Appointments</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Agendamentos</h1>
         <Link href="/appointments/new">
           <Button>
-            <Plus className="mr-2 h-4 w-4" /> New Appointment
+            <Plus className="mr-2 h-4 w-4" /> Novo Agendamento
           </Button>
         </Link>
       </div>
@@ -118,8 +118,8 @@ export default function AppointmentsPage() {
         {/* Calendar and filters */}
         <Card className="lg:col-span-4">
           <CardHeader>
-            <CardTitle>Calendar</CardTitle>
-            <CardDescription>Select a date to view appointments</CardDescription>
+            <CardTitle>Calendário</CardTitle>
+            <CardDescription>Selecione uma data para ver agendamentos</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
@@ -130,9 +130,9 @@ export default function AppointmentsPage() {
                 </label>
                 <Tabs value={view} onValueChange={(v) => setView(v as "day" | "week" | "month")}>
                   <TabsList className="grid grid-cols-3">
-                    <TabsTrigger value="day">Day</TabsTrigger>
-                    <TabsTrigger value="week">Week</TabsTrigger>
-                    <TabsTrigger value="month">Month</TabsTrigger>
+                    <TabsTrigger value="day">Dia</TabsTrigger>
+                    <TabsTrigger value="week">Semana</TabsTrigger>
+                    <TabsTrigger value="month">Mês</TabsTrigger>
                   </TabsList>
                 </Tabs>
               </div>
@@ -145,10 +145,10 @@ export default function AppointmentsPage() {
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent position="popper">
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="scheduled">Scheduled</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="scheduled">Agendado</SelectItem>
+                    <SelectItem value="completed">Completo</SelectItem>
+                    <SelectItem value="cancelled">Cancelado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -160,14 +160,14 @@ export default function AppointmentsPage() {
         <Card className="lg:col-span-8">
           <CardHeader>
             <CardTitle>
-              {view === "day" && date && `Appointments for ${date.toLocaleDateString()}`}
-              {view === "week" && "Appointments for the Week"}
+              {view === "day" && date && `Agendamentos para ${date.toLocaleDateString()}`}
+              {view === "week" && "Agendamentos da semana"}
               {view === "month" &&
                 date &&
-                `Appointments for ${date.toLocaleString("default", { month: "long", year: "numeric" })}`}
+                `Agendamentos para ${date.toLocaleString("default", { month: "long", year: "numeric" })}`}
             </CardTitle>
             <CardDescription>
-              {filteredAppointments.length} appointment{filteredAppointments.length !== 1 ? "s" : ""} found
+              {filteredAppointments.length} agendamento{filteredAppointments.length !== 1 ? "s" : ""} encontrado
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -200,7 +200,7 @@ export default function AppointmentsPage() {
                     <div className="flex flex-wrap gap-2 mt-4">
                       <Link href={`/appointments/${appointment.id}/update`}>
                         <Button variant="outline" size="sm">
-                          View Details
+                          Detalhes
                         </Button>
                       </Link>
                       
@@ -213,13 +213,13 @@ export default function AppointmentsPage() {
                               className="text-green-600 border-green-600 hover:bg-green-50"
                             >
                               <CheckCircle className="mr-1 h-3 w-3" />
-                              Complete
+                              Finalizar
                             </Button>
                           </Link>
                           <Link href={`/appointments/${appointment.id}/cancel`}>
                             <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50">
                               <XCircle className="mr-1 h-3 w-3" />
-                              Cancel
+                              Cancelar
                             </Button>
                           </Link>
                         </>
@@ -230,7 +230,7 @@ export default function AppointmentsPage() {
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                No appointments found for the selected date and filters.
+                Nenhum agendamento encontrado com esses filtros.
               </div>
             )}
           </CardContent>

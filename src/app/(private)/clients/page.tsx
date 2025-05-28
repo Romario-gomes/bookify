@@ -28,10 +28,10 @@ export default function Client() {
     return (
         <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold">Clients</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold">Clientes</h1>
                 <Link href="/clients/new">
                     <Button>
-                        <Plus className="mr-2 h-4 w-4" /> Add Client
+                        <Plus className="mr-2 h-4 w-4" /> Adicionar Cliente
                     </Button>
                 </Link>
             </div>
@@ -41,7 +41,7 @@ export default function Client() {
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground text-gray-500" />
                     <Input
                         type="search"
-                        placeholder="Search clients..."
+                        placeholder="Procurar cliente..."
                         className="pl-8 border-gray-200"
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -52,11 +52,11 @@ export default function Client() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Contact</TableHead>
-                            <TableHead className="hidden sm:table-cell">Last Visit</TableHead>
-                            <TableHead className="hidden md:table-cell">Notes</TableHead>
-                            <TableHead className="w-[100px]">Actions</TableHead>
+                            <TableHead>Nome</TableHead>
+                            <TableHead>Contato</TableHead>
+                            <TableHead className="hidden sm:table-cell">Última visita</TableHead>
+                            <TableHead className="hidden md:table-cell">Anotações</TableHead>
+                            <TableHead className="w-[100px]">Ações</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -87,31 +87,31 @@ export default function Client() {
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" size="icon">
                                                     <MoreHorizontal className="h-4 w-4" />
-                                                    <span className="sr-only">Open menu</span>
+                                                    <span className="sr-only">Abrir menu</span>
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem asChild>
                                                     <Link href={`/clients/${client.id}`} className="flex items-center">
                                                         <Calendar className="mr-2 h-4 w-4" />
-                                                        <span>View History</span>
+                                                        <span>Histórico</span>
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem asChild>
                                                     <Link href={`/appointments/new?client=${client.id}`} className="flex items-center">
                                                         <Calendar className="mr-2 h-4 w-4" />
-                                                        <span>New Appointment</span>
+                                                        <span>Novo agendamento</span>
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem asChild>
                                                     <Link href={`/clients/${client.id}/edit`} className="flex items-center">
                                                         <Edit className="mr-2 h-4 w-4" />
-                                                        <span>Edit</span>
+                                                        <span>Editar</span>
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem className="text-red-600 focus:text-red-600">
                                                     <Trash2 className="mr-2 h-4 w-4" />
-                                                    <span>Delete</span>
+                                                    <span>Excluir</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -121,7 +121,7 @@ export default function Client() {
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                                    No clients found. Try a different search term or add a new client.
+                                    Nenhum cliente encontrado. Tente um novo filtro ou adicione um cliente.
                                 </TableCell>
                             </TableRow>
                         )}

@@ -71,7 +71,7 @@ export default function ServicesPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search services..."
+            placeholder="Procurar serviços..."
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -83,11 +83,11 @@ export default function ServicesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Service</TableHead>
-              <TableHead className="hidden sm:table-cell">Category</TableHead>
-              <TableHead className="hidden sm:table-cell">Duration</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead>Serviço</TableHead>
+              <TableHead className="hidden sm:table-cell">Categoria</TableHead>
+              <TableHead className="hidden sm:table-cell">Duração</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead className="w-[100px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -119,19 +119,19 @@ export default function ServicesPage() {
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Open menu</span>
+                          <span className="sr-only">Abrir menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                           <Link href={`/services/${service.id}/edit`} className="flex items-center">
                             <Edit className="mr-2 h-4 w-4" />
-                            <span>Edit</span>
+                            <span>Editar</span>
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600 focus:text-red-600">
                           <Trash2 className="mr-2 h-4 w-4" />
-                          <span>Delete</span>
+                          <span>Excluir</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

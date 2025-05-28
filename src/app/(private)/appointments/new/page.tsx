@@ -144,13 +144,13 @@ useEffect(() => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Schedule New Appointment</h1>
+        <h1 className="text-3xl font-bold">Agendar novo pedido</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Appointment Details</CardTitle>
-          <CardDescription>Schedule a new appointment for a client.</CardDescription>
+          <CardTitle>Detalhes do pedido</CardTitle>
+          <CardDescription>Agende um novo compromisso para um cliente.</CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
@@ -167,11 +167,11 @@ useEffect(() => {
                   name="clientId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Client</FormLabel>
+                      <FormLabel>Cliente</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a client" />
+                            <SelectValue placeholder="Selecione um cliente" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -191,11 +191,11 @@ useEffect(() => {
                   name="serviceId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Service</FormLabel>
+                      <FormLabel>Serviço</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a service" />
+                            <SelectValue placeholder="Selecione um serviço" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -221,7 +221,7 @@ useEffect(() => {
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>Data</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -232,7 +232,7 @@ useEffect(() => {
                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
+                          <Calendar   
                             className="bg-gray-50"
                             mode="single"
                             selected={field.value}
@@ -251,11 +251,11 @@ useEffect(() => {
                   name="time"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Time</FormLabel>
+                      <FormLabel>Horário</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a time" />
+                            <SelectValue placeholder="Selecione um horário" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -278,7 +278,7 @@ useEffect(() => {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price (R$)</FormLabel>
+                      <FormLabel>Preço (R$)</FormLabel>
                       <FormControl>
                         <Input type="number" min="0" step="0.01" {...field} />
                       </FormControl>
@@ -301,10 +301,10 @@ useEffect(() => {
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormLabel>Observações (opcional)</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Enter any notes about this appointment"
+                        placeholder="Escreva qualquer anotação sobre esse agendamento"
                         className="min-h-[80px]"
                         {...field}
                       />
@@ -317,11 +317,11 @@ useEffect(() => {
               <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
                 <Link href="/appointments" className="w-full sm:w-auto">
                   <Button variant="outline" type="button" className="w-full sm:w-auto">
-                    Cancel
+                    Cancelar
                   </Button>
                 </Link>
                 <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
-                  {isLoading ? "Scheduling..." : "Schedule Appointment"}
+                  {isLoading ? "Agendanto..." : "Agendar atendimento"}
                 </Button>
               </div>
             </form>

@@ -22,9 +22,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Appointments", href: "/appointments", icon: CalendarDays },
-    { name: "Clients", href: "/clients", icon: Users },
-    { name: "Services", href: "/services", icon: Scissors },
+    { name: "Agendamentos", href: "/appointments", icon: CalendarDays },
+    { name: "Clientes", href: "/clients", icon: Users },
+    { name: "Serviços", href: "/services", icon: Scissors },
   ]
 
     const isActive = (path: string) => {
@@ -74,24 +74,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       )}
                   </Avatar>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-700">User Name</p>
-                    <p className="text-xs font-medium text-gray-500">View profile</p>
+                    { session?.user?.name && (
+                      <p className="text-sm font-medium text-gray-700">{session.user.name}</p>
+                      )}
+                    <p className="text-xs font-medium text-gray-500">Ver perfil</p>
                   </div>
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">Profile</Link>
+                  <Link href="/profile">Perfil</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings">Settings</Link>
+                  <Link href="/settings">Configurações</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => {}}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>Sair</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -104,7 +106,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <SheetContent side="left" className="w-64">
           <div className="flex items-center justify-between mb-6">
             <Link href="/" className="text-xl font-bold text-rose-600" onClick={() => setIsMobileMenuOpen(false)}>
-              NailPro
+              Bookify
             </Link>
           </div>
           <nav className="flex flex-col space-y-1">
@@ -149,18 +151,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/profile">Profile</Link>
+                    <Link href="/profile">Perfil</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/settings">Settings</Link>
+                    <Link href="/settings">Configurações</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => {}}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    <span>Sair</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
