@@ -1,10 +1,9 @@
-# 💅 NailPro - Professional Nail Salon Management System
+# 📆 Bookify - Sistema de gerenciamento de pedidos
 
 <div align="center">
-  <img src="docs/images/logo.png" alt="NailPro Logo" width="120" height="120">
-  
+  <h1>Bookify</h1>  
   <p align="center">
-    <strong>The complete solution for nail salon professionals</strong>
+    <strong>A solução completa para profissionais</strong>
   </p>
   
   <p align="center">
@@ -30,12 +29,14 @@
 ---
 
 ## 📸 Tela
+### Landing Page Overview
+<img src="docs/landing-page.png" alt="Dashboard Overview" width="100%">
 
 ### Dashboard Overview
 <img src="docs/dashboard.png" alt="Dashboard Overview" width="100%">
 
 ### Appointment Management
-<img src="docs/appointments.png" alt="Appointment Management" width="100%">
+<img src="docs/agendamentos.png" alt="Appointment Management" width="100%">
 
 ### Client Management
 <img src="docs/clients.png" alt="Client Management" width="100%">
@@ -45,50 +46,43 @@
 
 ---
 
-## ✨ Features
+## ✨ Recursos
 
-### 🏢 **Multi-Company Support**
-- **Complete Data Isolation**: Each salon operates independently
-- **Custom Branding**: Upload logos and customize company information
-- **Role-Based Access**: Owner, Admin, and Staff roles with different permissions
-- **Company Settings**: Configurable timezone, currency, and working days
+### 🏢 **Suporte Multiempresa**
+- **Isolamento Completo de Dados**: Cada empresa opera de forma independente
+- **Acesso por Funções**: Papéis de Proprietário, Administrador e Funcionário com permissões distintas
+- **Financeiro**: Acompanhamento de receitas.
+- **Configurações da Empresa**: Dias úteis de atendimento configuráveis
 
-### 👥 **Client Management**
-- **Comprehensive Profiles**: Store client contact information and preferences
-- **Visit History**: Track all past appointments and services
-- **Notes & Preferences**: Record allergies, preferences, and special notes
-- **Quick Actions**: Schedule new appointments directly from client profiles
+### 👥 **Gestão de Clientes**
+- **Perfis Completos:**: Armazene informações de contato e preferências dos clientes
+- **Histórico de Visitas:**: Acompanhe todos os agendamentos e serviços anteriores
+- **Notas e Preferências**: Registre alergias, preferências e observações especiais
+- **Ações Rápidas:**: Agende novos atendimentos diretamente pelo perfil do cliente
 
-### 📅 **Appointment Scheduling**
-- **Interactive Calendar**: Day, week, and month views
-- **Real-time Availability**: Prevent double-bookings automatically
-- **Status Management**: Track scheduled, completed, cancelled, and no-show appointments
-- **Flexible Scheduling**: Easy rescheduling and cancellation options
+### 📅 **Agendamento de Atendimentos**
+- **Calendário Interativo**: Visualizações por dia, semana e mês
+- **Disponibilidade em Tempo Real**: Evita automaticamente agendamentos duplicados
+- **Gestão de Status**: Acompanhe atendimentos agendados, concluídos, cancelados e ausentes
+- **Agendamento Flexível**: Reagendamento e cancelamento com facilidade
 
-### 💼 **Service Catalog**
-- **Unlimited Services**: Create and manage all your service offerings
-- **Pricing & Duration**: Set custom prices and service durations
-- **Categories**: Organize services by type (Manicure, Pedicure, Acrylic, etc.)
-- **Service Descriptions**: Detailed descriptions for each service
+### 💼 ** Catálogo de Serviços**
+- **Serviços Ilimitados**: Crie e gerencie todas as suas ofertas de serviços
+- **Preços e Duração:**: Defina valores personalizados e tempos de execução
+- **Categorias**: Organize os serviços por tipo (Manicure, Pedicure, Acrílico, etc.)
+- **Descrição dos Serviços**: Informações detalhadas sobre cada serviço
 
-### ⏰ **Working Hours Management**
-- **Flexible Schedules**: Set different hours for each day of the week
-- **Staff Schedules**: Individual working hours for each team member
-- **Holiday Management**: Easily disable specific days
-- **Time Slot Management**: Prevent bookings outside working hours
+### ⏰ **Gestão de Horários de Trabalho**
+- **Horários Flexíveis:**: Configure horários distintos para cada dia da semana
+- **Agenda da Equipe**: Horários de trabalho individuais para cada membro da equipe
+- **Gestão de Feriados**: Desative dias específicos com facilidade
+- **Gestão de Horários**: Impede agendamentos fora do horário de funcionamento
 
-### 📊 **Analytics & Reports**
-- **Business Metrics**: Track appointments, clients, and revenue
-- **Performance Insights**: Monitor your salon's growth
-- **Client Analytics**: Understand client behavior and preferences
-- **Financial Reports**: Revenue tracking and payment analysis
-
-### 🔐 **Security & Privacy**
-- **Secure Authentication**: Protected user accounts with encrypted passwords
-- **Data Privacy**: Complete data isolation between companies
-- **Role-Based Permissions**: Control access based on user roles
-- **Secure Data Storage**: All data encrypted and securely stored
-
+### 🔒 Segurança e Privacidade
+- **Autenticação Segura**: Contas protegidas com senhas criptografadas
+- **Privacidade de Dados**: Isolamento completo de dados entre empresas
+- **Permissões por Função**: Controle de acesso baseado nas funções dos usuários
+- **Armazenamento Seguro de Dados**: Todos os dados criptografados e armazenados com segurança
 ---
 
 ## 🚀 Demo
@@ -132,65 +126,6 @@ Password: password123
 - **[ESLint](https://eslint.org/)** - Code linting
 - **[Prettier](https://prettier.io/)** - Code formatting
 - **[TypeScript](https://www.typescriptlang.org/)** - Type checking
-
----
-
-## 📦 Installation
-
-### Prerequisites
-- **Node.js** 18.0 or higher
-- **npm** or **yarn**
-- **PostgreSQL** database
-
-### 1. Clone the Repository
-\`\`\`bash
-git clone https://github.com/yourusername/nailpro.git
-cd nailpro
-\`\`\`
-
-### 2. Install Dependencies
-\`\`\`bash
-npm install
-# or
-yarn install
-\`\`\`
-
-### 3. Environment Setup
-Create a `.env` file in the root directory:
-
-\`\`\`env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/nailpro"
-
-# NextAuth (if using authentication)
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Optional: File upload (if using cloud storage)
-CLOUDINARY_URL="cloudinary://your-cloudinary-url"
-\`\`\`
-
-### 4. Database Setup
-\`\`\`bash
-# Generate Prisma client
-npx prisma generate
-
-# Run database migrations
-npx prisma db push
-
-# Seed the database with sample data
-npm run db:seed
-\`\`\`
-
-### 5. Start Development Server
-\`\`\`bash
-npm run dev
-# or
-yarn dev
-\`\`\`
-
-Visit `http://localhost:3000` to see your application running!
-
 ---
 
 ## 🎯 Usage
@@ -217,90 +152,6 @@ Visit `http://localhost:3000` to see your application running!
    - Assign services and set prices
    - Track appointment status and payments
 
-### Key Workflows
-
-#### Booking an Appointment
-\`\`\`
-1. Navigate to Appointments → New Appointment
-2. Select client (or create new)
-3. Choose service and date/time
-4. Add any special notes
-5. Confirm booking
-\`\`\`
-
-#### Managing Payments
-\`\`\`
-1. Complete appointment
-2. Record payment method and amount
-3. Track payment status
-4. Generate reports for accounting
-\`\`\`
-
-#### Client Management
-\`\`\`
-1. Add client with contact information
-2. Record preferences and notes
-3. Track appointment history
-4. Schedule follow-up appointments
-\`\`\`
-
----
-
-## 🏗️ Project Structure
-
-\`\`\`
-nailpro/
-├── app/                    # Next.js App Router pages
-│   ├── appointments/       # Appointment management
-│   ├── clients/           # Client management
-│   ├── services/          # Service management
-│   ├── settings/          # Application settings
-│   └── dashboard/         # Main dashboard
-├── components/            # Reusable UI components
-│   ├── ui/               # shadcn/ui components
-│   └── dashboard-layout.tsx
-├── lib/                   # Utility functions and configurations
-│   ├── prisma.ts         # Database client
-│   ├── utils.ts          # Helper functions
-│   └── company-context.tsx
-├── prisma/               # Database schema and migrations
-│   ├── schema.prisma     # Database schema
-│   └── seed.ts          # Database seeding
-├── docs/                 # Documentation and images
-└── public/              # Static assets
-\`\`\`
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Here's how you can help:
-
-### Development Setup
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make your changes and test thoroughly
-4. Commit your changes: `git commit -m 'Add amazing feature'`
-5. Push to the branch: `git push origin feature/amazing-feature`
-6. Open a Pull Request
-
-### Contribution Guidelines
-- Follow the existing code style and conventions
-- Write clear, descriptive commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting
-
-### Areas for Contribution
-- 🐛 Bug fixes and improvements
-- ✨ New features and enhancements
-- 📚 Documentation improvements
-- 🎨 UI/UX enhancements
-- 🧪 Test coverage improvements
-- 🌐 Internationalization (i18n)
-
----
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -315,36 +166,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **[Prisma](https://www.prisma.io/)** for the excellent database toolkit
 
 ---
-
-## 📞 Support
-
-### Documentation
-- 📖 **[User Guide](docs/user-guide.md)** - Complete user documentation
-- 🔧 **[API Reference](docs/api-reference.md)** - API documentation
-- 🚀 **[Deployment Guide](docs/deployment.md)** - Deployment instructions
-
-### Community
-- 💬 **[Discord Community](https://discord.gg/nailpro)** - Join our community
-- 🐛 **[Issue Tracker](https://github.com/yourusername/nailpro/issues)** - Report bugs
-- 💡 **[Feature Requests](https://github.com/yourusername/nailpro/discussions)** - Suggest features
-
-### Professional Support
-For professional support, custom development, or enterprise features, contact us at:
-- 📧 **Email**: support@nailpro.com
-- 🌐 **Website**: [www.nailpro.com](https://www.nailpro.com)
-
----
-
-<div align="center">
-  <p>Made with ❤️ for nail salon professionals worldwide</p>
-  
-  <p>
-    <a href="https://github.com/yourusername/nailpro/stargazers">⭐ Star us on GitHub</a> •
-    <a href="https://twitter.com/nailpro">🐦 Follow on Twitter</a> •
-    <a href="https://www.linkedin.com/company/nailpro">💼 Connect on LinkedIn</a>
-  </p>
-</div>
-\`\`\`
-
 Now let's create the documentation structure with placeholder images:
 
