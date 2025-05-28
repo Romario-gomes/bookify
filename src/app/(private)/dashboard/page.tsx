@@ -34,7 +34,6 @@ export default function Dashboard() {
   })
 
   
-  console.log('session: ', session);
   useEffect(() => {
     // In a real app, this would be an API call
     const fetchAppointments = async () => {
@@ -55,7 +54,6 @@ export default function Dashboard() {
       setService(data); 
     };
 
-
     fetchAppointments();
     fetchClients();
     fetchServices();
@@ -65,6 +63,10 @@ export default function Dashboard() {
       totalRevenue: 3250,
     })
   }, []);
+
+    console.log('Clients: ', clients);
+    console.log('Appointments: ', appointments);
+    console.log('Services: ', services);
 
     const totalRevenue = services.reduce((sum, service) => {
       return sum + Number(service.price);

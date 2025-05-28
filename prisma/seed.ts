@@ -1,168 +1,176 @@
-import { PrismaClient, AppointmentStatus } from "@prisma/client"
-import * as bcrypt from "bcrypt";
+import { PrismaClient, UserRole, AppointmentStatus } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
+const SALT_ROUNDS = 10;
 
 async function main() {
-  console.log("Starting seeding...")
+  // Hash de senha
+  const hashedPassword = await bcrypt.hash('password123', SALT_ROUNDS);
 
-  // Clear existing data
-  await prisma.appointment.deleteMany({})
-  await prisma.workingHours.deleteMany({})
-  await prisma.service.deleteMany({})
-  await prisma.client.deleteMany({})
-  await prisma.user.deleteMany({})
+  // Criar empresas
+  const company1 = await prisma.company.create({
+    data: {
+      name: 'Alpha Corp',
+      email: 'contact@alphacorp.com',
+      phone: '123456789',
+      address: 'Rua A, 100',
+      website: 'https://alphacorp.com',
+      logo: 'https://via.placeholder.com/150?text=Alpha+Corp',
+    },
+  });
 
-  console.log("Cleared existing data")
+  const company2 = await prisma.company.create({
+    data: {
+      name: 'Beta Solutions',
+      email: 'hello@betasolutions.com',
+      phone: '987654321',
+      address: 'Avenida B, 200',
+      website: 'https://betasolutions.com',
+      logo: 'https://via.placeholder.com/150?text=Beta+Solutions',
+    },
+  });
 
-  // Create users (nail professionals)
-  const users = await Promise.all([
+  // Criar usuários (com senha criptografada)
+  const [user1A, user1B] = await Promise.all([
     prisma.user.create({
       data: {
-        name: "Maria Oliveira",
-        email: "maria@nailpro.com",
-        password: await bcrypt.hash("password123", 10),
+        name: 'Alice Admin',
+        email: 'alice@alphacorp.com',
+        password: hashedPassword,
+        role: 'ADMIN',
+        companyId: company1.id,
       },
     }),
     prisma.user.create({
       data: {
-        name: "Ana Silva",
-        email: "ana@nailpro.com",
-        password: await bcrypt.hash("password123", 10),
+        name: 'Bob Staff',
+        email: 'bob@alphacorp.com',
+        password: hashedPassword,
+        role: 'STAFF',
+        companyId: company1.id,
       },
     }),
-  ])
+  ]);
 
-  console.log(`Created ${users.length} users`)
-
-  // Create services for each user
-  const serviceData = [
-    { name: "Basic Manicure", price: 35.0, duration: 30, category: "Manicure" },
-    { name: "Gel Manicure", price: 50.0, duration: 45, category: "Manicure" },
-    { name: "Basic Pedicure", price: 45.0, duration: 45, category: "Pedicure" },
-    { name: "Gel Pedicure", price: 60.0, duration: 60, category: "Pedicure" },
-    { name: "Full Set Acrylic", price: 80.0, duration: 90, category: "Acrylic" },
-    { name: "Acrylic Fill", price: 50.0, duration: 60, category: "Acrylic" },
-    { name: "Nail Art (Simple)", price: 10.0, duration: 15, category: "Add-on" },
-    { name: "Nail Art (Complex)", price: 25.0, duration: 30, category: "Add-on" },
-  ]
-
-  const services = []
-  for (const user of users) {
-    for (const service of serviceData) {
-      services.push(
-        await prisma.service.create({
-          data: {
-            name: service.name,
-            price: service.price,
-            duration: service.duration,
-            category: service.category,
-            userId: user.id,
-          },
-        }),
-      )
-    }
-  }
-
-  console.log(`Created ${services.length} services`)
-
-  // Create clients for each user
-  const clientsData = [
-    { name: "Carla Santos", email: "carla@example.com", phone: "(11) 99876-5432", notes: "Prefers gel polish" },
-    { name: "Juliana Costa", email: "juliana@example.com", phone: "(11) 97654-3210", notes: "Allergic to acetone" },
-    { name: "Patricia Lima", email: "patricia@example.com", phone: "(11) 98877-6655", notes: "Prefers natural nails" },
-    { name: "Fernanda Alves", email: "fernanda@example.com", phone: "(11) 96655-4433", notes: "Sensitive cuticles" },
-    { name: "Luciana Martins", email: "luciana@example.com", phone: "(11) 99988-7766", notes: "Likes bright colors" },
-  ]
-
-  const clients = []
-  for (const user of users) {
-    for (const client of clientsData) {
-      clients.push(
-        await prisma.client.create({
-          data: {
-            name: client.name,
-            email: client.email,
-            phone: client.phone,
-            notes: client.notes,
-            userId: user.id,
-          },
-        }),
-      )
-    }
-  }
-
-  console.log(`Created ${clients.length} clients`)
-
-  // Create working hours for each user
-  const daysOfWeek = [0, 1, 2, 3, 4, 5, 6] // 0 = Sunday, 1 = Monday, etc.
-  const workingHours = []
-
-  for (const user of users) {
-    for (const day of daysOfWeek) {
-      // Sunday (0) and Saturday (6) have different hours
-      const isWeekend = day === 0 || day === 6
-
-      workingHours.push(
-        await prisma.workingHours.create({
-          data: {
-            dayOfWeek: day,
-            startTime: isWeekend ? "09:00" : "08:00",
-            endTime: isWeekend ? "14:00" : "18:00",
-            isEnabled: day !== 0, // Sunday is disabled
-            userId: user.id,
-          },
-        }),
-      )
-    }
-  }
-
-  console.log(`Created ${workingHours.length} working hours records`)
-
-  const today = new Date()
-  const appointments = []
-
-  // Helper function to add days to a date
-  const addDays = (date: Date, days: number) => {
-    const result = new Date(date)
-    result.setDate(result.getDate() + days)
-    return result
-  }
-
-  // Helper function to set time on a date
-  const setTime = (date: Date, timeString: string) => {
-    const [hours, minutes] = timeString.split(":").map(Number)
-    const result = new Date(date)
-    result.setHours(hours, minutes, 0, 0)
-    return result
-  }
-
-  // Create upcoming appointments (scheduled)
-  for (let i = 0; i < 5; i++) {
-    const user = users[i % users.length]
-    const client = clients[(i + 2) % clients.length]
-    const service = services[(i + 3) % services.length]
-
-    const appointment = await prisma.appointment.create({
+  const [user2A, user2B] = await Promise.all([
+    prisma.user.create({
       data: {
-        date: setTime(addDays(today, i + 1), "10:00"),
-        status: AppointmentStatus.SCHEDULED,
-        price: service.price,
-        userId: user.id,
-        clientId: client.id,
-        serviceId: service.id,
+        name: 'Carol Admin',
+        email: 'carol@betasolutions.com',
+        password: hashedPassword,
+        role: 'ADMIN',
+        companyId: company2.id,
       },
-    })
+    }),
+    prisma.user.create({
+      data: {
+        name: 'Dave Staff',
+        email: 'dave@betasolutions.com',
+        password: hashedPassword,
+        role: 'STAFF',
+        companyId: company2.id,
+      },
+    }),
+  ]);
 
-    appointments.push(appointment)
+  // Criar clientes
+  const client1 = await prisma.client.create({
+    data: {
+      name: 'Cliente 1',
+      phone: '999111222',
+      email: 'cliente1@exemplo.com',
+      companyId: company1.id,
+      userId: user1A.id,
+    },
+  });
+
+  const client2 = await prisma.client.create({
+    data: {
+      name: 'Cliente 2',
+      phone: '999333444',
+      email: 'cliente2@exemplo.com',
+      companyId: company2.id,
+      userId: user2A.id,
+    },
+  });
+
+  // Criar serviços
+  const service1 = await prisma.service.create({
+    data: {
+      name: 'Consultoria Alpha',
+      price: 150.0,
+      duration: 60,
+      category: 'Consultoria',
+      companyId: company1.id,
+      userId: user1B.id,
+    },
+  });
+
+  const service2 = await prisma.service.create({
+    data: {
+      name: 'Desenvolvimento Beta',
+      price: 200.0,
+      duration: 90,
+      category: 'Desenvolvimento',
+      companyId: company2.id,
+      userId: user2B.id,
+    },
+  });
+
+  // Criar agendamentos
+  await prisma.appointment.create({
+    data: {
+      date: new Date(),
+      status: AppointmentStatus.SCHEDULED,
+      price: service1.price,
+      companyId: company1.id,
+      userId: user1B.id,
+      clientId: client1.id,
+      serviceId: service1.id,
+    },
+  });
+
+  await prisma.appointment.create({
+    data: {
+      date: new Date(),
+      status: AppointmentStatus.COMPLETED,
+      price: service2.price,
+      companyId: company2.id,
+      userId: user2B.id,
+      clientId: client2.id,
+      serviceId: service2.id,
+    },
+  });
+
+  // Criar horários de trabalho
+  for (let i = 1; i <= 5; i++) {
+    await prisma.workingHours.createMany({
+      data: [
+        {
+          dayOfWeek: i,
+          startTime: '09:00',
+          endTime: '17:00',
+          companyId: company1.id,
+          userId: user1B.id,
+        },
+        {
+          dayOfWeek: i,
+          startTime: '10:00',
+          endTime: '18:00',
+          companyId: company2.id,
+          userId: user2B.id,
+        },
+      ],
+    });
   }
+
+  console.log('Seed concluído com sucesso!');
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error(e);
+    process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect()
-})
+  .finally(() => prisma.$disconnect());
