@@ -28,7 +28,7 @@
 
 ---
 
-## 📸 Tela
+## 📸 Telas
 ### Landing Page Overview
 <img src="docs/landing-page.png" alt="Dashboard Overview" width="100%">
 
@@ -126,6 +126,7 @@ Password: password123
 - **[ESLint](https://eslint.org/)** - Code linting
 - **[Prettier](https://prettier.io/)** - Code formatting
 - **[TypeScript](https://www.typescriptlang.org/)** - Type checking
+- **[Docker](https://www.docker.com/)** -  Isolated development environment
 ---
 
 ## 🎯 Usage
