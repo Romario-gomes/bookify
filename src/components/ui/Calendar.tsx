@@ -24,8 +24,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         chevron: 'inline-block fill-gray-400 ',
         week: 'grid grid-cols-7',
         weekdays: 'grid grid-cols-7',
-        weekday: 'w-14 h-14 flex items-center justify-center text-gray-500',
-        day: 'inline-flex items-center justify-center rounded text-gray-700 hover:bg-gray-200 hover:text-gray-900 w-14 h-14 font-normal aria-selected:opacity-100 cursor-pointer',
+        weekday: 'flex align-center justify-center text-gray-500',
+        day: 'inline-flex items-center justify-center rounded text-gray-700 hover:bg-gray-200 hover:text-gray-900 w-12 h-12 font-normal aria-selected:opacity-100 cursor-pointer',
         today: 'bg-gray-100 font-semibold',
         selected:
           'bg-blue-500 text-white hover:bg-blue-500 hover:text-white focus:bg-blue-500 focus:text-white',

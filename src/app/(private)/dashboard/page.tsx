@@ -10,6 +10,7 @@ import { Plus, CalendarDays, Users, CreditCard, Scissors, Clock } from "lucide-r
 import Link from "next/link";
 import { Client, Prisma, Service } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const upcomingAppointments = [
   { id: 1, client: "Maria Silva", service: "Gel Manicure", date: "2025-04-10T14:00:00", status: "scheduled" },
@@ -20,7 +21,8 @@ type AppointmentWithClient = Prisma.AppointmentGetPayload<{
     include: { client: true, user: true, service: true }
   }>;
 export default function Dashboard() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
+  const { showToast } = useToast();
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
   const [services, setService] = useState<Service[]>([]);

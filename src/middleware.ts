@@ -19,10 +19,10 @@ export function middleware(request: NextRequest) {
     const publicRoute = publicRoutes.find(route => route.path === path);
     const authToken = request.cookies.get('token');
 
-    /* if(!authToken && publicRoute) {
+   if(!authToken && publicRoute) {
         return NextResponse.next();
     }
-
+ 
     if(!authToken && !publicRoute) {
         const redirectUrl = request.nextUrl.clone();
 
@@ -42,7 +42,7 @@ export function middleware(request: NextRequest) {
     if(authToken && !publicRoute) {
 
         return NextResponse.next();
-    } */
+    }
 
     return NextResponse.next();
 }
