@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { SheetContent, Sheet } from "./Sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 
 interface DashboardLayoutProps {
     children: React.ReactNode
@@ -81,21 +81,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   </div>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/profile">Perfil</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings">Configurações</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => {}}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sair</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+              <DropdownMenuContent align="end" className="bg-white border rounded-md">
+                  <DropdownMenuLabel className="px-2 py-1.5 text-sm font-semibold">Minha Conta</DropdownMenuLabel>
+                <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-200" />
+                  <DropdownMenuItem className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200" >
+                    <Link href="/profile">Perfil</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200">
+                    <Link href="/settings" >Configurações</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-200" />
+                  <DropdownMenuItem className="px-2 py-1.5 flex items-center cursor-pointer text-sm outline-none hover:bg-gray-200" onClick={() => signOut({ callbackUrl: '/sign-in' })}>
+                    <LogOut size={16} />
+                    <span>Sair</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden">
-        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
+        <div className="relative z-10 flex-shrink-0 flex h-16  border-b border-gray-200">
           <Button variant="ghost" size="icon" className="md:hidden px-4" onClick={() => setIsMobileMenuOpen(true)}>
             <Menu className="h-6 w-6" />
             <span className="sr-only">Open sidebar</span>
@@ -150,18 +150,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                <DropdownMenuContent align="end" className="bg-white border rounded-md">
+                  <DropdownMenuLabel className="px-2 py-1.5 text-sm font-semibold">Minha Conta</DropdownMenuLabel>
+                <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-200" />
+                  <DropdownMenuItem className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200" >
                     <Link href="/profile">Perfil</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings">Configurações</Link>
+                  <DropdownMenuItem className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200">
+                    <Link href="/settings" >Configurações</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => {}}>
-                    <LogOut className="mr-2 h-4 w-4" />
+                  <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-200" />
+                  <DropdownMenuItem className="px-2 py-1.5 flex items-center cursor-pointer text-sm outline-none hover:bg-gray-200" onClick={() => signOut({ callbackUrl: '/sign-in' })}>
+                    <LogOut size={16} />
                     <span>Sair</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

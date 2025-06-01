@@ -63,7 +63,7 @@ enum UserRole {
 model Client {
   id            String    @id @default(uuid())
   name          String
-  email         String?
+  email         String    @unique
   phone         String
   notes         String?
   createdAt     DateTime  @default(now())

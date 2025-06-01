@@ -1,24 +1,18 @@
+import { getToken } from "next-auth/jwt";
 import { MiddlewareConfig, NextRequest, NextResponse } from "next/server";
 
 const publicRoutes = [
     { path: '/sign-in', whenAuthenticated: 'redirect' },
     { path: '/register', whenAuthenticated: 'redirect' },
-    { path: '/dashboard', whenAuthenticated: 'next' },
-    { path: '/appointments', whenAuthenticated: 'next' },
-
-    { path: '/clients', whenAuthenticated: 'next' },
     { path: '/', whenAuthenticated: 'next' },
-    { path: '/accounts', whenAuthenticated: 'next' },
 ] as const;
-
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = '/sign-in'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
     const publicRoute = publicRoutes.find(route => route.path === path);
-    const authToken = request.cookies.get('token');
-
+    const authToken = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
    if(!authToken && publicRoute) {
         return NextResponse.next();
     }
@@ -34,13 +28,12 @@ export function middleware(request: NextRequest) {
     if(authToken && publicRoute?.whenAuthenticated === 'redirect'){
         const redirectUrl = request.nextUrl.clone();
 
-        redirectUrl.pathname = '/';
+        redirectUrl.pathname = '/dashboard';
 
         return NextResponse.redirect(redirectUrl);
     }
 
     if(authToken && !publicRoute) {
-
         return NextResponse.next();
     }
 
@@ -57,6 +50,5 @@ export const config: MiddlewareConfig = {
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
     '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-  
     ],
 }
