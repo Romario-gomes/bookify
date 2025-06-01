@@ -101,7 +101,7 @@ export default function SignInPage() {
                     href=""
                     className="text-sm text-rose-600 hover:text-rose-800"
                   >
-                    Forgot password
+                    Esqueci a senha
                   </a>
                 </div>
 
@@ -122,12 +122,12 @@ export default function SignInPage() {
 
           <CardFooter className="flex justify-center">
             <p className="text-sm text-gray-600">
-              Don&apos;t have an account?{" "}
+              Não possui uma conta?{" "}
               <Link
                 href="/register"
                 className="text-rose-600 hover:text-rose-800 font-medium"
               >
-                Sign up
+                cadastre-se
               </Link>
             </p>
           </CardFooter>

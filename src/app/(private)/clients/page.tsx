@@ -90,26 +90,26 @@ export default function Client() {
                                                     <span className="sr-only">Abrir menu</span>
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem asChild>
+                                            <DropdownMenuContent align="end" className="bg-white border rounded-md">
+                                                <DropdownMenuItem  className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200">
                                                     <Link href={`/clients/${client.id}`} className="flex items-center">
                                                         <Calendar className="mr-2 h-4 w-4" />
                                                         <span>Histórico</span>
                                                     </Link>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem asChild>
+                                                <DropdownMenuItem  className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200">
                                                     <Link href={`/appointments/new?client=${client.id}`} className="flex items-center">
                                                         <Calendar className="mr-2 h-4 w-4" />
                                                         <span>Novo agendamento</span>
                                                     </Link>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem asChild>
+                                                <DropdownMenuItem  className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200">
                                                     <Link href={`/clients/${client.id}/edit`} className="flex items-center">
                                                         <Edit className="mr-2 h-4 w-4" />
                                                         <span>Editar</span>
                                                     </Link>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                                                <DropdownMenuItem className="px-2 py-1.5 text-red-600 flex items-center cursor-pointer text-sm outline-none hover:bg-gray-200">
                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                     <span>Excluir</span>
                                                 </DropdownMenuItem>
