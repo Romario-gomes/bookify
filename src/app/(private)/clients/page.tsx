@@ -104,7 +104,7 @@ export default function Client() {
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem  className="px-2 py-1.5 text-sm outline-none hover:bg-gray-200">
-                                                    <Link href={`/clients/${client.id}/edit`} className="flex items-center">
+                                                    <Link href={`/clients/${client.id}/update`} className="flex items-center">
                                                         <Edit className="mr-2 h-4 w-4" />
                                                         <span>Editar</span>
                                                     </Link>

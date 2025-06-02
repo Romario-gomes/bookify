@@ -23,15 +23,6 @@ const clientSchema = z.object({
 
 type ClientFormValues = z.infer<typeof clientSchema>
 
-// Mock client data - in a real app, this would come from your database
-const mockClient = {
-  id: "1",
-  name: "Maria Silva",
-  email: "maria@example.com",
-  phone: "(11) 98765-4321",
-  notes: "Prefers gel polish",
-}
-
 export default function UpdateClientPage() {
   const router = useRouter()
   const params = useParams()
@@ -53,18 +44,17 @@ export default function UpdateClientPage() {
   useEffect(() => {
     async function loadClient() {
       try {
-        // In a real app, this would be an API call
-        // const client = await fetch(`/api/clients/${params.id}`).then(res => res.json())
+        const client = await fetch(`/api/clients/${params.id}`).then(res => res.json());
 
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         // Use mock data for now
         form.reset({
-          name: mockClient.name,
-          email: mockClient.email,
-          phone: mockClient.phone,
-          notes: mockClient.notes,
+          name: client.name ?? "",
+          email: client.email ?? "",
+          phone: client.phone ?? "",
+          notes: client.notes ?? "",
         })
       } catch (err) {
         setError("Failed to load client data")
@@ -81,12 +71,19 @@ export default function UpdateClientPage() {
     setError(null)
 
     try {
-      // In a real app, this would be an API call
-      console.log("Updated client data:", { id: params.id, ...data })
+        
+        // In a real app, this would be an API call
+        console.log("Updated client data:", { id: params.id, ...data })
+        const clientUpdated = await fetch('/api/clients', {
+            body: JSON.stringify({ id: params.id, ...data }),
+            method: 'PUT',
+            headers: { "Content-Type": "application/json" },
 
+        }).then(res => res.json());
+    
+        console.log('Atualizado: ', clientUpdated);
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000))
-
       // Redirect to clients list
       router.push("/clients")
     } catch (err) {

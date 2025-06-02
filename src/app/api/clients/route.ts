@@ -53,3 +53,38 @@ export async function POST(req: NextRequest) {
         status: 201
     });
 }
+
+
+export async function PUT(req: NextRequest) {
+    const data = await req.json();
+    console.log('Dados: ', data);
+    const clientAlreadyExists = await prisma.client.findFirst({
+        where: {
+            id: data.id,
+        }
+    });
+
+    if(!clientAlreadyExists) {
+        return NextResponse.json({ message: 'Cliente Não encontrado.'}, {
+            headers: { "Content-Type": "application/json" },
+            status: 404
+        });
+    }
+
+    const cliente = await prisma.client.update({
+        where: {
+            id: clientAlreadyExists.id,
+        },
+        data: {
+            name: data.name,
+            phone: data.phone,
+            email: data.email,
+            notes: data.notes,
+        }
+    });
+
+    return NextResponse.json(JSON.stringify(cliente), {
+        headers: { "Content-Type": "application/json" },
+        status: 201
+    });
+}
