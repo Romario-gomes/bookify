@@ -17,3 +17,18 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   return NextResponse.json(appointment);
 }
+
+
+export async function POST(req: NextRequest, context: { params: Promise<{ id: string }>}) {
+  const { status } = await req.json();
+  const { id } = await context.params;
+  
+  const appointment = await prisma.appointment.update({
+    where: { id: id },
+    data: {
+      status,
+    }
+  })
+
+  return NextResponse.json(appointment);
+}

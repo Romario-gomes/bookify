@@ -24,16 +24,16 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-    const { clientId, serviceId, date, price, notes } = await req.json();
+    const { clientId, serviceId, date, price, notes, companyId, userId } = await req.json();
     const appointment = await prisma.appointment.create({
         data: {
             clientId,
             serviceId,
-            companyId: '3e5b31a7-76d1-4776-b0f9-69176feb9ab2',
+            companyId,
             date,
             price,
             notes,
-            userId: '052fd01b-58ce-46fa-9117-a103baa39a12',
+            userId,
         },
     });
 

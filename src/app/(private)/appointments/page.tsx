@@ -8,8 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { Badge } from "@/components/ui/Badge"
-import { Plus, CalendarIcon, Clock, CheckCircle, XCircle } from "lucide-react"
-import { Appointment, Prisma } from "@prisma/client"
+import { Plus, CalendarIcon, Clock, CheckCircle, XCircle, Trash2 } from "lucide-react"
+import { Prisma } from "@prisma/client"
+import { AlertDialogHeader, AlertDialogFooter, AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/AlertDialog"
+import { useRouter } from "next/navigation"
 
 // Mock data for demonstration
 
@@ -18,6 +20,7 @@ type AppointmentWithClient = Prisma.AppointmentGetPayload<{
 }>;
 
 export default function AppointmentsPage() {
+  const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
   const [view, setView] = useState<"day" | "week" | "month">("day")
@@ -70,7 +73,6 @@ export default function AppointmentsPage() {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   )
 
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "scheduled":
@@ -95,6 +97,17 @@ export default function AppointmentsPage() {
         return <Badge variant="outline">{status}</Badge>
     }
   }
+
+  async function handleDelete(id: string) {
+    const deletedAppointment = await fetch(`/api/appointments/${id}`, {
+      method: 'POST',
+      body: JSON.stringify({ status: 'CANCELLED' }),
+    });
+
+      router.push("/appointments")
+
+    
+  } 
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -216,12 +229,34 @@ export default function AppointmentsPage() {
                               Finalizar
                             </Button>
                           </Link>
-                          <Link href={`/appointments/${appointment.id}/cancel`}>
-                            <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50">
-                              <XCircle className="mr-1 h-3 w-3" />
-                              Cancelar
-                            </Button>
-                          </Link>
+
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <div onSelect={(e) => e.preventDefault()}>
+                                <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50">
+                                  <XCircle className="mr-1 h-3 w-3" />
+                                  Cancelar
+                                </Button>
+                              </div>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-white">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Esta ação não pode ser desfeita. Isso excluirá permanentemente o agendamento e removerá todos os
+                                  dados associados.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => {handleDelete(appointment.id)}} className="bg-red-600 hover:bg-red-700">
+                                  Excluir
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                         
                         </>
                       )}
                     </div>

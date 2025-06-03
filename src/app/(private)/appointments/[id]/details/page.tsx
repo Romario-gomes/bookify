@@ -44,48 +44,22 @@ import {
   AlertCircle,
   FileText,
 } from "lucide-react"
-import DashboardLayout from "@/components/ui/DashboardLayout"
+import { Prisma } from "@prisma/client"
 
 // Mock appointment data - in a real app, this would come from your database
-const mockAppointment = {
-  id: "1",
-  date: "2025-04-15T14:00:00",
-  status: "scheduled" as const,
-  price: 50.0,
-  notes: "Regular customer, prefers gel polish",
-  createdAt: "2025-04-10T10:30:00",
-  client: {
-    id: "1",
-    name: "Maria Silva",
-    email: "maria@example.com",
-    phone: "(11) 98765-4321",
-    notes: "Prefers gel polish, allergic to acetone",
-  },
-  service: {
-    id: "2",
-    name: "Gel Manicure",
-    price: 50.0,
-    duration: 45,
-    category: "Manicure",
-    description: "Professional gel manicure with long-lasting finish",
-  },
-  payment: {
-    id: "1",
-    amount: 50.0,
-    method: "credit_card" as const,
-    status: "completed" as const,
-    date: "2025-04-15T14:45:00",
-  },
-}
 
-type AppointmentStatus = "scheduled" | "completed" | "cancelled" | "no_show"
+
+type AppointmentWithClient = Prisma.AppointmentGetPayload<{
+  include: { client: true, user: true, service: true }
+}>;
+type AppointmentStatus = "SCHEDULED" | "COMPLETED" | "CANCELLED" | "NO_SHOW"
 type PaymentMethod = "cash" | "credit_card" | "debit_card" | "pix"
 type PaymentStatus = "pending" | "completed" | "refunded" | "failed"
 
 export default function AppointmentDetailsPage() {
   const params = useParams()
   const router = useRouter()
-  const [appointment, setAppointment] = useState<typeof mockAppointment | null>(null)
+  const [appointment, setAppointment] = useState<AppointmentWithClient>({} as AppointmentWithClient);
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
@@ -95,13 +69,14 @@ export default function AppointmentDetailsPage() {
     async function loadAppointment() {
       try {
         // In a real app, this would be an API call
-        // const appointment = await fetch(`/api/appointments/${params.id}`).then(res => res.json())
+        const appointment = await fetch(`/api/appointments/${params.id}`).then(res => res.json());
 
+        console.log('Appointment: ', appointment);
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         // Use mock data for now
-        setAppointment(mockAppointment)
+        setAppointment(appointment)
       } catch (err) {
         setError("Failed to load appointment details")
       } finally {
@@ -114,28 +89,28 @@ export default function AppointmentDetailsPage() {
 
   const getStatusBadge = (status: AppointmentStatus) => {
     switch (status) {
-      case "scheduled":
+      case "SCHEDULED":
         return (
           <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-100">
             <Calendar className="mr-1 h-3 w-3" />
             Scheduled
           </Badge>
         )
-      case "completed":
+      case "COMPLETED":
         return (
           <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
             <CheckCircle className="mr-1 h-3 w-3" />
             Completed
           </Badge>
         )
-      case "cancelled":
+      case "CANCELLED":
         return (
           <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">
             <XCircle className="mr-1 h-3 w-3" />
             Cancelled
           </Badge>
         )
-      case "no_show":
+      case "NO_SHOW":
         return (
           <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">
             <AlertCircle className="mr-1 h-3 w-3" />
@@ -200,16 +175,15 @@ export default function AppointmentDetailsPage() {
     }).format(price)
   }
 
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString)
+  const formatDateTime = (date: Date) => {
     return {
-      date: date.toLocaleDateString("pt-BR", {
+      date: new Date(date).toLocaleDateString("pt-BR", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       }),
-      time: date.toLocaleTimeString("pt-BR", {
+      time: new Date(date).toLocaleTimeString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit",
       }),
@@ -236,16 +210,14 @@ export default function AppointmentDetailsPage() {
     }
   }
 
-  const handleDelete = async () => {
+  const handleDelete = async (id: string) => {
     setIsUpdating(true)
     try {
-      // In a real app, this would be an API call
-      console.log(`Deleting appointment ${params.id}`)
+       const deletedAppointment = await fetch(`/api/appointments/${id}`, {
+        method: 'POST',
+        body: JSON.stringify({ status: 'CANCELLED' }),
+      });
 
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Redirect to appointments list
       router.push("/appointments")
     } catch (err) {
       setError("Failed to delete appointment")
@@ -268,7 +240,7 @@ export default function AppointmentDetailsPage() {
 
   if (error || !appointment) {
     return (
-    <>
+      <>
         <div className="flex items-center mb-6">
           <Link href="/appointments" className="mr-4">
             <Button variant="ghost" size="icon">
@@ -288,7 +260,7 @@ export default function AppointmentDetailsPage() {
   const appointmentDateTime = formatDateTime(appointment.date)
 
   return (
-     <>
+    <>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <Link href="/appointments" className="mr-4">
@@ -312,31 +284,32 @@ export default function AppointmentDetailsPage() {
                 {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-white">
               <DropdownMenuItem asChild>
                 <Link href={`/appointments/${appointment.id}/edit`} className="flex items-center">
                   <Edit className="mr-2 h-4 w-4" />
                   <span>Editar</span>
                 </Link>
               </DropdownMenuItem>
-              {appointment.status === "scheduled" && (
+              {appointment.status === "SCHEDULED" && (
                 <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleStatusUpdate("completed")}>
+                  <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-200" />
+                  <DropdownMenuItem onClick={() => handleStatusUpdate("COMPLETED")}>
                     <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
                     <span>Finalizar</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusUpdate("cancelled")}>
+                  <DropdownMenuItem onClick={() => handleStatusUpdate("CANCELLED")}>
                     <XCircle className="mr-2 h-4 w-4 text-red-600" />
                     <span>Cancelar</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusUpdate("no_show")}>
+                  <DropdownMenuItem onClick={() => handleStatusUpdate("NO_SHOW")}>
                     <AlertCircle className="mr-2 h-4 w-4 text-gray-600" />
                     <span>Esconder</span>
                   </DropdownMenuItem>
                 </>
               )}
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-200" />
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
@@ -348,13 +321,13 @@ export default function AppointmentDetailsPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
                     <AlertDialogDescription>
-                     Esta ação não pode ser desfeita. Isso excluirá permanentemente o agendamento e removerá todos os
-dados associados.
+                      Esta ação não pode ser desfeita. Isso excluirá permanentemente o agendamento e removerá todos os
+                      dados associados.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                    <AlertDialogAction onClick={() => handleDelete(appointment.id)} className="bg-red-600 hover:bg-red-700">
                       Excluir
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -404,7 +377,7 @@ dados associados.
                     <CreditCard className="mr-2 h-4 w-4" />
                     Preço
                   </div>
-                  <p className="font-medium text-lg">{formatPrice(appointment.price)}</p>
+                  <p className="font-medium text-lg">{formatPrice(Number(appointment.price))}</p>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-muted-foreground">
@@ -447,7 +420,7 @@ dados associados.
                   </Badge>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-lg">{formatPrice(appointment.service.price)}</p>
+                  <p className="font-semibold text-lg">{formatPrice(Number(appointment.service.price))}</p>
                   <p className="text-sm text-muted-foreground">{appointment.service.duration} min</p>
                 </div>
               </div>
@@ -457,46 +430,7 @@ dados associados.
             </CardContent>
           </Card>
 
-          {/* Payment Information */}
-          {appointment.payment && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Informação do pagamento
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Preço
-                    </div>
-                    <p className="font-medium text-lg">{formatPrice(appointment.payment.amount)}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Método de pagamento
-                    </div>
-                    <p className="font-medium">{getPaymentMethodLabel(appointment.payment.method)}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">Status</div>
-                    <div>{getPaymentStatusBadge(appointment.payment.status)}</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Data do pagamento
-                    </div>
-                    <p className="font-medium">{new Date(appointment.payment.date).toLocaleDateString("pt-BR")}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+
         </div>
 
         {/* Client information sidebar */}
@@ -561,34 +495,57 @@ dados associados.
           </Card>
 
           {/* Quick Actions */}
-          {appointment.status === "scheduled" && (
+          {appointment.status === "SCHEDULED" && (
             <Card>
               <CardHeader>
                 <CardTitle>Ações rápidas</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button
-                  onClick={() => handleStatusUpdate("completed")}
+                  onClick={() => handleStatusUpdate("COMPLETED")}
                   disabled={isUpdating}
                   className="w-full bg-green-600 hover:bg-green-700"
                 >
                   <CheckCircle className="mr-2 h-4 w-4" />
                   Finalizar agendamento
                 </Button>
-                <Button
-                  onClick={() => handleStatusUpdate("cancelled")}
-                  disabled={isUpdating}
-                  variant="outline"
-                  className="w-full text-red-600 border-red-600 hover:bg-red-50"
-                >
-                  <XCircle className="mr-2 h-4 w-4" />
-                  Cancelar agendamento
-                </Button>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+
+                    <Button
+                      onClick={() => handleStatusUpdate("CANCELLED")}
+                      disabled={isUpdating}
+                      variant="outline"
+                      className="w-full text-red-600 border-red-600 hover:bg-red-50"
+                    >
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Cancelar agendamento
+                    </Button>
+
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. Isso excluirá permanentemente o agendamento e removerá todos os
+                        dados associados.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDelete(appointment.id)} className="bg-red-600 hover:bg-red-700">
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
               </CardContent>
             </Card>
           )}
         </div>
       </div>
-     </>
+    </>
   )
 }
