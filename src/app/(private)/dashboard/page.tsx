@@ -21,7 +21,6 @@ type AppointmentWithClient = Prisma.AppointmentGetPayload<{
     include: { client: true, user: true, service: true }
   }>;
 export default function Dashboard() {
-  const { data: session, status } = useSession();
   const { showToast } = useToast();
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
@@ -35,7 +34,6 @@ export default function Dashboard() {
 
   
   useEffect(() => {
-    // In a real app, this would be an API call
     const fetchAppointments = async () => {
       const response = await fetch('/api/appointments');
       const data = await response.json();
@@ -64,13 +62,50 @@ export default function Dashboard() {
     })
   }, []);
 
-    console.log('Clients: ', clients);
-    console.log('Appointments: ', appointments);
-    console.log('Services: ', services);
+  console.log('Agendamentos: ', appointments);
 
-    const totalRevenue = services.reduce((sum, service) => {
-      return sum + Number(service.price);
-    }, 0)
+
+  function normalizaData(dataStr: string) {
+  const data = new Date(dataStr);
+  data.setHours(0, 0, 0, 0);
+  return data;
+}
+
+function filtrarPorHoje(appointments: AppointmentWithClient[]) {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  return appointments.filter(appointment => normalizaData(String(appointment.date)).getTime() === hoje.getTime());
+}
+
+function filtrarPorAmanha(appointments: AppointmentWithClient[]) {
+  const amanha = new Date();
+  amanha.setDate(amanha.getDate() + 1);
+  amanha.setHours(0, 0, 0, 0);
+  return appointments.filter(appointment => normalizaData(String(appointment.date)).getTime() === amanha.getTime());
+}
+
+function filterWeek(appointments: AppointmentWithClient[]) {
+  const today = new Date();
+  const sunday = new Date(today);
+  const saturday = new Date(today);
+
+  const dayWeek = today.getDay();
+  const diffSunday =  dayWeek === 0 ? -6 : 1 - dayWeek;
+
+  sunday.setDate(today.getDate() + diffSunday);
+  sunday.setHours(23, 59, 59, 999);
+
+
+  saturday.setDate(sunday.getDate() + 6);
+  saturday.setHours(23, 59, 59, 999);
+  
+  const appointmentsFiltered = appointments.filter(appointment => { 
+    const data = new Date(appointment.date);
+    return data >= sunday && data <= saturday;
+  })
+  return appointmentsFiltered;
+}
+  const totalRevenue = appointments.reduce((total, appointment) => total + Number(appointment.price), 0);
 
     return (
       <>
@@ -88,31 +123,31 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Agendamentos</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            <CalendarDays className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{appointments.length}</div>
-            <p className="text-xs text-muted-foreground">Esse mês</p>
+            <p className="text-xs text-gray-500">Esse mês</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Clientes</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{clients.length}</div>
-            <p className="text-xs text-muted-foreground">Clientes ativos</p>
+            <p className="text-xs text-gray-500">Clientes ativos</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CreditCard className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">R$ {totalRevenue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Esse mês</p>
+            <p className="text-xs text-gray-500">Esse mês</p>
           </CardContent>
         </Card>
       </div>
@@ -148,51 +183,55 @@ export default function Dashboard() {
                 <TabsTrigger value="week">Essa semana</TabsTrigger>
               </TabsList>
               <TabsContent value="today" className="space-y-4">
-                {appointments.slice(0, 2).map((appointment) => (
+                {filtrarPorHoje(appointments).map((appointment) => (
                   <div key={appointment.id} className="flex justify-between items-center p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{appointment.client.name}</p>
-                      <p className="text-sm text-muted-foreground">{appointment.service.name}</p>
+                      <p className="text-sm text-gray-500">{appointment.service.name}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium">
-                        {new Date(appointment.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {new Date(appointment.date).toLocaleDateString("pt-br")}
+                        {" "}
+                        {new Date(appointment.date).toLocaleTimeString("pt-br", { hour: '2-digit', minute: '2-digit' })}
                       </p>
-                      <p className="text-xs text-muted-foreground capitalize">{appointment.status}</p>
+                      <p className="text-xs text-gray-500 capitalize">{appointment.status}</p>
                     </div>
                   </div>
                 ))}
               </TabsContent>
               <TabsContent value="tomorrow" className="space-y-4">
-                <div className="flex justify-between items-center p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{upcomingAppointments[2].client}</p>
-                    <p className="text-sm text-muted-foreground">{upcomingAppointments[2].service}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      {new Date(upcomingAppointments[2].date).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                    <p className="text-xs text-muted-foreground capitalize">{upcomingAppointments[2].status}</p>
-                  </div>
-                </div>
-              </TabsContent>
-              <TabsContent value="week" className="space-y-4">
-                {appointments.map((appointment) => (
+                {filtrarPorAmanha(appointments).map((appointment) => (
                   <div key={appointment.id} className="flex justify-between items-center p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{appointment.client.name}</p>
-                      <p className="text-sm text-muted-foreground">{appointment.service.name}</p>
+                      <p className="text-sm text-gray-500 ">{appointment.service.name}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium">
-                        {new Date(appointment.date).toLocaleDateString()}{" "}
-                        {new Date(appointment.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {new Date(appointment.date).toLocaleDateString("pt-br")}
+                        {" "}
+                        {new Date(appointment.date).toLocaleTimeString("pt-br", { hour: '2-digit', minute: '2-digit' })}
                       </p>
-                      <p className="text-xs text-muted-foreground capitalize">{appointment.status}</p>
+                      <p className="text-xs text-gray-500  capitalize">{appointment.status}</p>
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+              <TabsContent value="week" className="space-y-4">
+                {filterWeek(appointments).map((appointment) => (
+                  <div key={appointment.id} className="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                      <p className="font-medium">{appointment.client.name}</p>
+                      <p className="text-sm text-gray-500">{appointment.service.name}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm">
+                        {new Date(appointment.date).toLocaleDateString("pt-br")}
+                        {" "}
+                        {new Date(appointment.date).toLocaleTimeString("pt-br", { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                      <p className="text-xs text-gray-500 capitalize">{appointment.status}</p>
                     </div>
                   </div>
                 ))}
@@ -220,11 +259,11 @@ export default function Dashboard() {
                 <div key={client.id} className="flex justify-between items-center p-3 border rounded-lg">
                   <div>
                     <p className="font-medium">{client.name}</p>
-                    <p className="text-sm text-muted-foreground">{client.phone}</p>
+                    <p className="text-sm text-gray-500">{client.phone}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm">última visita</p>
-                    <p className="text-xs text-muted-foreground">12/05/2025</p>
+                    <p className="text-xs text-gray-500">12/05/2025</p>
                   </div>
                 </div>
               ))}

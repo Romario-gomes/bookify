@@ -298,23 +298,14 @@ export default function AppointmentDetailsPage() {
                     <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
                     <span>Finalizar</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusUpdate("CANCELLED")}>
-                    <XCircle className="mr-2 h-4 w-4 text-red-600" />
-                    <span>Cancelar</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusUpdate("NO_SHOW")}>
-                    <AlertCircle className="mr-2 h-4 w-4 text-gray-600" />
-                    <span>Esconder</span>
-                  </DropdownMenuItem>
                 </>
               )}
-              <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-gray-200" />
-
+              
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                    <span className="text-red-600">Excluir</span>
+                    <XCircle className="mr-2 h-4 w-4 text-red-600" />
+                    <span className="text-red-600">Cancelar</span>
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
                 <AlertDialogContent>

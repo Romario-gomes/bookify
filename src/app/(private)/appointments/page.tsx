@@ -191,21 +191,21 @@ export default function AppointmentsPage() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-medium">{appointment.client.name}</h3>
-                        <p className="text-sm text-muted-foreground">{appointment.service.name}</p>
+                        <p className="text-sm text-gray-500">{appointment.service.name}</p>
                       </div>
                       {getStatusBadge(appointment.status)}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm">
                       <div className="flex items-center">
-                        <CalendarIcon className="mr-1 h-3 w-3 text-muted-foreground" />
+                        <CalendarIcon className="mr-1 h-3 w-3 text-gray-500" />
                         {new Date(appointment.date).toLocaleDateString()}
                       </div>
                       <div className="flex items-center">
-                        <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
+                        <Clock className="mr-1 h-3 w-3 text-gray-500" />
                         {new Date(appointment.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </div>
                       <div className="flex items-center">
-                        <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
+                        <Clock className="mr-1 h-3 w-3 text-gray-500" />
                         {appointment.service.duration} min
                       </div>
                       <div className="font-medium ml-auto">{formatPrice(Number(appointment.price))}</div>
@@ -242,16 +242,15 @@ export default function AppointmentsPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent className="bg-white">
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
+                                <AlertDialogTitle>Tem certeza que deseja cancelar?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Esta ação não pode ser desfeita. Isso excluirá permanentemente o agendamento e removerá todos os
-                                  dados associados.
+                                  Essa ação removerá o compromisso e os dados associados. 
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                 <AlertDialogAction onClick={() => {handleDelete(appointment.id)}} className="bg-red-600 hover:bg-red-700">
-                                  Excluir
+                                  Cancelar
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -264,7 +263,7 @@ export default function AppointmentsPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-gray-500">
                 Nenhum agendamento encontrado com esses filtros.
               </div>
             )}
