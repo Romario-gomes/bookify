@@ -159,9 +159,9 @@ export default function AppointmentsPage() {
                   </SelectTrigger>
                   <SelectContent position="popper">
                     <SelectItem value="all">Todos</SelectItem>
-                    <SelectItem value="scheduled">Agendado</SelectItem>
-                    <SelectItem value="completed">Completo</SelectItem>
-                    <SelectItem value="cancelled">Cancelado</SelectItem>
+                    <SelectItem value="SCHEDULED">Agendado</SelectItem>
+                    <SelectItem value="COMPLETED">Completo</SelectItem>
+                    <SelectItem value="CANCELLED">Cancelado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
