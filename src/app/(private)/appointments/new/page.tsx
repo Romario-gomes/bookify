@@ -18,6 +18,7 @@ import { AlertCircle, ArrowLeft, CalendarIcon, Clock } from "lucide-react"
 import Link from "next/link"
 import Input from "@/components/ui/Input"
 import { Client, Service } from "@prisma/client"
+import { useSession } from "next-auth/react"
 
 // Available time slots (in a real app, these would be dynamically generated based on working hours and existing appointments)
 const timeSlots = [
@@ -54,6 +55,8 @@ const appointmentSchema = z.object({
 type AppointmentFormValues = z.infer<typeof appointmentSchema>
 
 export default function NewAppointmentPage() {
+  const { data: session } = useSession();
+
   const router = useRouter()
   const searchParams = useSearchParams();
   const [ clients, setClients ] = useState<Client[]>([]);
@@ -122,7 +125,7 @@ useEffect(() => {
 
       await fetch('/api/appointments', {
         method: 'POST',
-        body: JSON.stringify(data), 
+        body: JSON.stringify({...data, companyId: session?.user.companyId, userId: session?.user.id}), 
         headers: {"Content-Type": "application/json"},
       });
 
