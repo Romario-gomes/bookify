@@ -8,12 +8,19 @@ import Input from "@/components/ui/Input"
 import { Plus, Search, MoreHorizontal, Phone, Calendar, Edit, Trash2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table"
+import { Client } from "@prisma/client"
 
-import { Client as prismaClient } from "@prisma/client";
 
-export default function Client() {
-    const [searchTerm, setSearchTerm] = useState("")
-    const [clients, setClients] = useState<prismaClient[]>([]);
+export default function ClientsPage() {
+    const [clients, setClients] = useState<Client[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredClients = clients.filter(
+        (client) => {
+            return (client.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            client.phone.toLowerCase().includes(searchTerm.toLowerCase())
+        )}
+    );
 
     useEffect(() => {
         const fetchClients = async () => {
@@ -43,6 +50,7 @@ export default function Client() {
                         type="search"
                         placeholder="Procurar cliente..."
                         className="pl-8 border-gray-200"
+                        value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
@@ -60,8 +68,8 @@ export default function Client() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {clients.length > 0 ? (
-                            clients.map((client) => (
+                        {filteredClients.length > 0 ? (
+                            filteredClients.map((client) => (
                                 <TableRow key={client.id}>
                                     <TableCell className="font-medium">{client.name}</TableCell>
                                     <TableCell>

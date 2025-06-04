@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/Button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/DropdownMenu"
 import { Badge } from "@/components/ui/Badge"
-import { Plus, Search, MoreHorizontal, Clock, Edit, Trash2 } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Clock, Edit, Trash2, XCircle } from "lucide-react"
 import Input from "@/components/ui/Input"
 import { Service } from "@prisma/client"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/AlertDialog"
 
 // Mock data for demonstration
 
@@ -46,7 +47,7 @@ export default function ServicesPage() {
   }
 
   useEffect(() => {
-    const fetchServices = async() => {
+    const fetchServices = async () => {
       const response = await fetch('api/services');
       const data = await response.json();
       setServices(data);
@@ -91,8 +92,8 @@ export default function ServicesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {services.length > 0 ? (
-              services.map((service) => (
+            {filteredServices.length > 0 ? (
+              filteredServices.map((service) => (
                 <TableRow key={service.id}>
                   <TableCell className="font-medium">
                     {service.name}
@@ -129,10 +130,31 @@ export default function ServicesPage() {
                             <span>Editar</span>
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600 focus:text-red-600">
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          <span>Excluir</span>
-                        </DropdownMenuItem>
+                        
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <XCircle className="mr-2 h-4 w-4 text-red-600" />
+                                <span className="text-sm text-red-600">Excluir</span>
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Esta ação não pode ser desfeita. Isso excluirá permanentemente o serviço e removerá todos os
+                                  dados associados.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => {console.log()}} className="bg-red-600 hover:bg-red-700">
+                                  Excluir
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -141,7 +163,7 @@ export default function ServicesPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  No services found. Try a different search term or add a new service.
+                  Nenhum serviço encontrado. Experimente um termo de pesquisa diferente ou adicione um novo serviço
                 </TableCell>
               </TableRow>
             )}
