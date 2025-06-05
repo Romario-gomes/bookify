@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { Badge } from "@/components/ui/Badge"
 import { Plus, CalendarIcon, Clock, CheckCircle, XCircle, Trash2 } from "lucide-react"
-import { Prisma } from "@prisma/client"
+import { AppointmentStatus, Prisma } from "@prisma/client"
 import { AlertDialogHeader, AlertDialogFooter, AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/AlertDialog"
 import { useRouter } from "next/navigation"
 
@@ -98,10 +98,10 @@ export default function AppointmentsPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    const deletedAppointment = await fetch(`/api/appointments/${id}`, {
+  async function handleUpdateStatus(id: string, status: AppointmentStatus) {
+    const updateStatus = await fetch(`/api/appointments/${id}`, {
       method: 'POST',
-      body: JSON.stringify({ status: 'CANCELLED' }),
+      body: JSON.stringify({ status: status }),
     });
 
       router.push("/appointments")
@@ -217,18 +217,17 @@ export default function AppointmentsPage() {
                         </Button>
                       </Link>
                       
-                      {appointment.status === "SCHEDULED" && (
+                      {appointment.status === AppointmentStatus.SCHEDULED && (
                         <>
-                          <Link href={`/appointments/${appointment.id}/complete`}>
                             <Button
                               variant="outline"
                               size="sm"
+                              onClick={() => {handleUpdateStatus(appointment.id, AppointmentStatus.COMPLETED)}}
                               className="text-green-600 border-green-600 hover:bg-green-50"
                             >
                               <CheckCircle className="mr-1 h-3 w-3" />
                               Finalizar
                             </Button>
-                          </Link>
 
 
                           <AlertDialog>
@@ -249,7 +248,7 @@ export default function AppointmentsPage() {
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => {handleDelete(appointment.id)}} className="bg-red-600 hover:bg-red-700">
+                                <AlertDialogAction onClick={() => {handleUpdateStatus(appointment.id, AppointmentStatus.CANCELLED)}} className="bg-red-600 hover:bg-red-700">
                                   Cancelar
                                 </AlertDialogAction>
                               </AlertDialogFooter>
