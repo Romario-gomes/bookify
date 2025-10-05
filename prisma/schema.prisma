@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Company model for multi-tenancy
+model Company {
+  id            String    @id @default(uuid())
+  name          String
+  email         String?
+  phone         String?
+  address       String?
+  website       String?
+  logo          String?   // URL to logo image
+  settings      Json?     // Company-specific settings
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  users         User[]
+  clients       Client[]
+  services      Service[]
+  appointments  Appointment[]
+  workingHours  WorkingHours[]
+
+  @@index([name])
+}
+
+// User model for authentication and user management
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          UserRole  @default(STAFF)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  clients       Client[]
+  services      Service[]
+  appointments  Appointment[]
+  workingHours  WorkingHours[]
+
+  @@index([companyId])
+  @@index([email])
+}
+
+// Enum for user roles
+enum UserRole {
+  OWNER
+  ADMIN
+  STAFF
+}
+
+// Client model for storing client information
+model Client {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  phone         String
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  appointments  Appointment[]
+
+  @@index([companyId])
+  @@index([userId])
+}
+
+// Service model for storing service offerings
+model Service {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  price         Decimal   @db.Decimal(10, 2)
+  duration      Int       // Duration in minutes
+  category      String
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  appointments  Appointment[]
+
+  @@index([companyId])
+  @@index([userId])
+}
+
+// Appointment model for scheduling appointments
+model Appointment {
+  id            String    @id @default(uuid())
+  date          DateTime
+  status        AppointmentStatus @default(SCHEDULED)
+  notes         String?
+  price         Decimal   @db.Decimal(10, 2)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  clientId      String
+  client        Client    @relation(fields: [clientId], references: [id])
+  serviceId     String
+  service       Service   @relation(fields: [serviceId], references: [id])
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([clientId])
+  @@index([serviceId])
+}
+
+// Enum for appointment status
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// WorkingHours model for storing working hours configuration
+model WorkingHours {
+  id            String    @id @default(uuid())
+  dayOfWeek     Int       // 0 = Sunday, 1 = Monday, etc.
+  startTime     String    // Format: "HH:MM"
+  endTime       String    // Format: "HH:MM"
+  isEnabled     Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([companyId, userId, dayOfWeek])
+  @@index([companyId])
+  @@index([userId])
+}
+
+
