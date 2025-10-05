@@ -74,7 +74,7 @@ export default function NewServicePage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Add New Service</h1>
+        <h1 className="text-3xl font-bold">Adicionar novo serviço</h1>
       </div>
 
       <Card>

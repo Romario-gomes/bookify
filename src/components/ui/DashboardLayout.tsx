@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "./Button"
-import { CalendarDays, CreditCard, LayoutDashboard, LogOut, Menu, Scissors, Settings, Users } from "lucide-react"
+import { CalendarDays, LayoutDashboard, LogOut, Menu, Scissors, Users } from "lucide-react"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -16,7 +16,6 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { data: session } = useSession();
-  console.log('Dados: ', session);
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 

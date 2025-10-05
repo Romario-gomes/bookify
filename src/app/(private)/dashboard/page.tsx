@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { useEffect, useState } from "react";
@@ -9,19 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { Plus, CalendarDays, Users, CreditCard, Scissors, Clock } from "lucide-react";
 import Link from "next/link";
 import { Client, Prisma, Service } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import { useToast } from "@/components/ui/ToastProvider";
 
-const upcomingAppointments = [
-  { id: 1, client: "Maria Silva", service: "Gel Manicure", date: "2025-04-10T14:00:00", status: "scheduled" },
-  { id: 2, client: "Ana Oliveira", service: "Full Set Acrylic", date: "2025-04-10T16:30:00", status: "scheduled" },
-  { id: 3, client: "Carla Santos", service: "Pedicure", date: "2025-04-11T10:00:00", status: "scheduled" },
-]
 type AppointmentWithClient = Prisma.AppointmentGetPayload<{
     include: { client: true, user: true, service: true }
   }>;
 export default function Dashboard() {
-  const { showToast } = useToast();
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
   const [services, setService] = useState<Service[]>([]);
@@ -62,7 +55,6 @@ export default function Dashboard() {
     })
   }, []);
 
-  console.log('Agendamentos: ', appointments);
 
 
   function normalizaData(dataStr: string) {
@@ -193,7 +185,7 @@ function filterWeek(appointments: AppointmentWithClient[]) {
                       <p className="font-medium">
                         {new Date(appointment.date).toLocaleDateString("pt-br")}
                         {" "}
-                        {new Date(appointment.date).toLocaleTimeString("pt-br", { hour: '2-digit', minute: '2-digit' })}
+                        {appointment.time}
                       </p>
                       <p className="text-xs text-gray-500 capitalize">{appointment.status}</p>
                     </div>
@@ -208,10 +200,10 @@ function filterWeek(appointments: AppointmentWithClient[]) {
                       <p className="text-sm text-gray-500 ">{appointment.service.name}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">
+                      <p className="text-sm">
                         {new Date(appointment.date).toLocaleDateString("pt-br")}
                         {" "}
-                        {new Date(appointment.date).toLocaleTimeString("pt-br", { hour: '2-digit', minute: '2-digit' })}
+                        {appointment.time}
                       </p>
                       <p className="text-xs text-gray-500  capitalize">{appointment.status}</p>
                     </div>
@@ -229,7 +221,7 @@ function filterWeek(appointments: AppointmentWithClient[]) {
                       <p className="text-sm">
                         {new Date(appointment.date).toLocaleDateString("pt-br")}
                         {" "}
-                        {new Date(appointment.date).toLocaleTimeString("pt-br", { hour: '2-digit', minute: '2-digit' })}
+                        {appointment.time}
                       </p>
                       <p className="text-xs text-gray-500 capitalize">{appointment.status}</p>
                     </div>

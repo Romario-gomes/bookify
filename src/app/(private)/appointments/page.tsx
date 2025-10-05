@@ -242,7 +242,7 @@ export default function AppointmentsPage() {
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                 <AlertDialogAction onClick={() => { handleUpdateStatus(appointment.id, AppointmentStatus.CANCELLED) }} className="bg-red-600 hover:bg-red-700">
-                                  Cancelar
+                                  Confirmar
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
