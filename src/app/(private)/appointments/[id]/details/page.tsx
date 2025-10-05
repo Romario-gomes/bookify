@@ -39,7 +39,6 @@ import {
   Edit,
   CheckCircle,
   XCircle,
-  Trash2,
   Loader2,
   AlertCircle,
   FileText,
@@ -53,8 +52,6 @@ type AppointmentWithClient = Prisma.AppointmentGetPayload<{
   include: { client: true, user: true, service: true }
 }>;
 type AppointmentStatus = "SCHEDULED" | "COMPLETED" | "CANCELLED" | "NO_SHOW"
-type PaymentMethod = "cash" | "credit_card" | "debit_card" | "pix"
-type PaymentStatus = "pending" | "completed" | "refunded" | "failed"
 
 export default function AppointmentDetailsPage() {
   const params = useParams()
@@ -77,6 +74,7 @@ export default function AppointmentDetailsPage() {
 
         // Use mock data for now
         setAppointment(appointment)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setError("Failed to load appointment details")
       } finally {
@@ -121,53 +119,7 @@ export default function AppointmentDetailsPage() {
         return <Badge variant="outline">{status}</Badge>
     }
   }
-
-  const getPaymentMethodLabel = (method: PaymentMethod) => {
-    switch (method) {
-      case "cash":
-        return "Cash"
-      case "credit_card":
-        return "Credit Card"
-      case "debit_card":
-        return "Debit Card"
-      case "pix":
-        return "PIX"
-      default:
-        return method
-    }
-  }
-
-  const getPaymentStatusBadge = (status: PaymentStatus) => {
-    switch (status) {
-      case "completed":
-        return (
-          <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
-            Paid
-          </Badge>
-        )
-      case "pending":
-        return (
-          <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-            Pending
-          </Badge>
-        )
-      case "refunded":
-        return (
-          <Badge variant="outline" className="bg-purple-100 text-purple-800 hover:bg-purple-100">
-            Refunded
-          </Badge>
-        )
-      case "failed":
-        return (
-          <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">
-            Failed
-          </Badge>
-        )
-      default:
-        return <Badge variant="outline">{status}</Badge>
-    }
-  }
-
+  
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -182,11 +134,7 @@ export default function AppointmentDetailsPage() {
         year: "numeric",
         month: "long",
         day: "numeric",
-      }),
-      time: new Date(date).toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      })
     }
   }
 
@@ -203,6 +151,7 @@ export default function AppointmentDetailsPage() {
       if (appointment) {
         setAppointment({ ...appointment })
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Failed to update appointment status")
     } finally {
@@ -213,12 +162,13 @@ export default function AppointmentDetailsPage() {
   const handleDelete = async (id: string) => {
     setIsUpdating(true)
     try {
-       const deletedAppointment = await fetch(`/api/appointments/${id}`, {
+       await fetch(`/api/appointments/${id}`, {
         method: 'POST',
         body: JSON.stringify({ status: 'CANCELLED' }),
       });
 
       router.push("/appointments")
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Failed to delete appointment")
       setIsUpdating(false)
@@ -271,7 +221,7 @@ export default function AppointmentDetailsPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Detalhes do pedido</h1>
             <p className="text-muted-foreground">
-              {appointmentDateTime.date} at {appointmentDateTime.time}
+              {appointmentDateTime.date} at {appointment.time}
             </p>
           </div>
         </div>
@@ -361,7 +311,7 @@ export default function AppointmentDetailsPage() {
                     <Clock className="mr-2 h-4 w-4" />
                     Horário
                   </div>
-                  <p className="font-medium">{appointmentDateTime.time}</p>
+                  <p className="font-medium">{appointment.time}</p>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-muted-foreground">

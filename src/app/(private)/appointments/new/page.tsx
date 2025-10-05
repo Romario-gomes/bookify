@@ -98,8 +98,6 @@ useEffect(() => {
     },
   })
 
-  
-
   // Update price when service changes
   useEffect(() => {
     const serviceId = form.watch("serviceId")

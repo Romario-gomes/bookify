@@ -103,6 +103,7 @@ model Service {
 model Appointment {
   id            String    @id @default(uuid())
   date          DateTime
+  time          String @default("00:00")
   status        AppointmentStatus @default(SCHEDULED)
   notes         String?
   price         Decimal   @db.Decimal(10, 2)

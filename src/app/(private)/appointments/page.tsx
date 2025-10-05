@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { Badge } from "@/components/ui/Badge"
-import { Plus, CalendarIcon, Clock, CheckCircle, XCircle, Trash2 } from "lucide-react"
+import { Plus, CalendarIcon, Clock, CheckCircle, XCircle } from "lucide-react"
 import { AppointmentStatus, Prisma } from "@prisma/client"
 import { AlertDialogHeader, AlertDialogFooter, AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/AlertDialog"
 import { useRouter } from "next/navigation"
@@ -32,7 +32,7 @@ export default function AppointmentsPage() {
       const data = await response.json();
       setAppointments(data);
     };
-    
+
     fetchAppointments();
   }, []);
 
@@ -68,11 +68,6 @@ export default function AppointmentsPage() {
     return dateMatches && statusMatches
   })
 
-  // Sort appointments by date
-  const sortedAppointments = [...filteredAppointments].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  )
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "scheduled":
@@ -99,15 +94,13 @@ export default function AppointmentsPage() {
   }
 
   async function handleUpdateStatus(id: string, status: AppointmentStatus) {
-    const updateStatus = await fetch(`/api/appointments/${id}`, {
+    await fetch(`/api/appointments/${id}`, {
       method: 'POST',
       body: JSON.stringify({ status: status }),
     });
 
-      router.push("/appointments")
-
-    
-  } 
+    router.push("/appointments")
+  }
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -202,7 +195,7 @@ export default function AppointmentsPage() {
                       </div>
                       <div className="flex items-center">
                         <Clock className="mr-1 h-3 w-3 text-gray-500" />
-                        {new Date(appointment.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {appointment.time}
                       </div>
                       <div className="flex items-center">
                         <Clock className="mr-1 h-3 w-3 text-gray-500" />
@@ -216,18 +209,18 @@ export default function AppointmentsPage() {
                           Detalhes
                         </Button>
                       </Link>
-                      
+
                       {appointment.status === AppointmentStatus.SCHEDULED && (
                         <>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {handleUpdateStatus(appointment.id, AppointmentStatus.COMPLETED)}}
-                              className="text-green-600 border-green-600 hover:bg-green-50"
-                            >
-                              <CheckCircle className="mr-1 h-3 w-3" />
-                              Finalizar
-                            </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => { handleUpdateStatus(appointment.id, AppointmentStatus.COMPLETED) }}
+                            className="text-green-600 border-green-600 hover:bg-green-50"
+                          >
+                            <CheckCircle className="mr-1 h-3 w-3" />
+                            Finalizar
+                          </Button>
 
 
                           <AlertDialog>
@@ -243,18 +236,18 @@ export default function AppointmentsPage() {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Tem certeza que deseja cancelar?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Essa ação removerá o compromisso e os dados associados. 
+                                  Essa ação removerá o compromisso e os dados associados.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => {handleUpdateStatus(appointment.id, AppointmentStatus.CANCELLED)}} className="bg-red-600 hover:bg-red-700">
+                                <AlertDialogAction onClick={() => { handleUpdateStatus(appointment.id, AppointmentStatus.CANCELLED) }} className="bg-red-600 hover:bg-red-700">
                                   Cancelar
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
-                         
+
                         </>
                       )}
                     </div>
